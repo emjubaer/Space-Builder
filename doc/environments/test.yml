@@ -1,0 +1,17 @@
+name: test
+variables:
+  - name: baseUrl
+    value: http://localhost:8000
+    description: Local Laravel app base URL (php artisan serve)
+  - secret: true
+    name: token
+    description: Sanctum Bearer token (auto-filled by Login / Register)
+  - name: email
+    value: api@example.com
+    description: Test user email
+  - name: mobile
+    value: "01700000000"
+    description: Test user mobile number
+  - secret: true
+    name: password
+    description: Test user password

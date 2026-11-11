@@ -1,0 +1,13 @@
+info:
+  name: Contact
+  type: folder
+  seq: 3
+
+docs: |-
+  # Contact
+
+  Public contact form endpoints.
+
+  | Method | Path | Auth |
+  |--------|------|------|
+  | POST | `/api/contact-messages` | Public (throttled) |

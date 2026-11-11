@@ -1,0 +1,13 @@
+info:
+  name: Company
+  type: folder
+  seq: 2
+
+docs: |-
+  # Company
+
+  Public company profile endpoints.
+
+  | Method | Path | Auth |
+  |--------|------|------|
+  | GET | `/api/company-profile` | Public |

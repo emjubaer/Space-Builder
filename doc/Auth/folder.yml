@@ -1,0 +1,17 @@
+info:
+  name: Auth
+  type: folder
+  seq: 1
+
+docs: |-
+  # Auth
+
+  Sanctum token authentication endpoints.
+
+  | Method | Path | Auth |
+  |--------|------|------|
+  | POST | `/api/register` | Public |
+  | POST | `/api/login` | Public |
+  | POST | `/api/forgot-password` | Public |
+  | POST | `/api/reset-password` | Public |
+  | POST | `/api/logout` | Bearer token |

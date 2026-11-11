@@ -1,0 +1,65 @@
+info:
+  name: Get Company Profile
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: '{{baseUrl}}/api/company-profile'
+  headers:
+    - name: Accept
+      value: application/json
+  auth: none
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Get Company Profile
+
+  Returns the singleton company profile with active social links and offices
+  (head office first). Use `latitude` / `longitude` on the profile and each
+  office for Google Maps pins.
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "data": {
+      "company_name": "Space Builder",
+      "tagline": "Building better spaces",
+      "description": "Company description",
+      "logo_url": null,
+      "favicon_url": null,
+      "email": "hello@example.com",
+      "phone": "+8801700000000",
+      "address": "Dhaka, Bangladesh",
+      "website_url": "https://spacebuilder.example",
+      "copyright_text": "© 2026 Space Builder",
+      "latitude": 23.8103000,
+      "longitude": 90.4125000,
+      "social_links": [
+        {
+          "platform": "facebook",
+          "platform_label": "Facebook",
+          "url": "https://facebook.com/example",
+          "sort_order": 0
+        }
+      ],
+      "offices": [
+        {
+          "name": "Head Office",
+          "address": "Dhaka",
+          "phone": "+8801700000000",
+          "email": "hq@example.com",
+          "is_head_office": true,
+          "latitude": 23.8103000,
+          "longitude": 90.4125000
+        }
+      ]
+    }
+  }
+  ```

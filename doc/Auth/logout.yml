@@ -1,0 +1,60 @@
+info:
+  name: Logout
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: '{{baseUrl}}/api/logout'
+  headers:
+    - name: Accept
+      value: application/json
+  body:
+    type: json
+    data: ''
+  auth:
+    type: bearer
+    token: '{{token}}'
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200) {
+          bru.setEnvVar('token', '');
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Logout
+
+  Revoke the current Sanctum access token.
+
+  ## Auth
+
+  `Authorization: Bearer {{token}}`
+
+  ## Request body
+
+  None.
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "message": "Logged out successfully."
+  }
+  ```
+
+  ## Response example — `401 Unauthorized`
+
+  ```json
+  {
+    "message": "Unauthenticated."
+  }
+  ```

@@ -1,0 +1,85 @@
+info:
+  name: Login
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: '{{baseUrl}}/api/login'
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{email}}",
+        "password": "{{password}}"
+      }
+  auth: none
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200 && res.body.token) {
+          bru.setEnvVar('token', res.body.token);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Login
+
+  Authenticate with email and password; returns a Sanctum API token.
+
+  ## Request body
+
+  | Field | Type | Required |
+  |-------|------|----------|
+  | `email` | string | yes |
+  | `password` | string | yes |
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "message": "Logged in successfully.",
+    "token": "2|abcdefghijklmnopqrstuvwxyz",
+    "user": {
+      "id": 1,
+      "name": null,
+      "email": "api@example.com",
+      "mobile": "01700000000",
+      "email_verified_at": null,
+      "created_at": "2026-11-11T03:00:00.000000Z",
+      "updated_at": "2026-11-11T03:00:00.000000Z"
+    }
+  }
+  ```
+
+  ## Response example — `401 Unauthorized`
+
+  ```json
+  {
+    "message": "These credentials do not match our records."
+  }
+  ```
+
+  ## Response example — `422 Unprocessable Entity`
+
+  ```json
+  {
+    "message": "The email field is required. (and 1 more error)",
+    "errors": {
+      "email": ["The email field is required."],
+      "password": ["The password field is required."]
+    }
+  }
+  ```
