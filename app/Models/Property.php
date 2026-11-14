@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Enums\PropertyImageType;
 use App\Enums\PropertyStatus;
+use Database\Factories\PropertyFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 #[Fillable([
     'location_id',
@@ -31,6 +37,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Property extends Model
 {
+    /** @use HasFactory<PropertyFactory> */
+    use HasFactory;
+
     /**
      * @return array<string, string>
      */
@@ -72,6 +81,46 @@ class Property extends Model
     }
 
     /**
+     * @return HasMany<PropertyImage, $this>
+     */
+    public function coverImages(): HasMany
+    {
+        return $this->hasMany(PropertyImage::class)
+            ->where('image_type', PropertyImageType::Cover)
+            ->orderBy('sort_order');
+    }
+
+    /**
+     * @return HasMany<PropertyImage, $this>
+     */
+    public function galleryImages(): HasMany
+    {
+        return $this->hasMany(PropertyImage::class)
+            ->where('image_type', PropertyImageType::Gallery)
+            ->orderBy('sort_order');
+    }
+
+    /**
+     * @return HasMany<PropertyImage, $this>
+     */
+    public function floorPlanImages(): HasMany
+    {
+        return $this->hasMany(PropertyImage::class)
+            ->where('image_type', PropertyImageType::FloorPlan)
+            ->orderBy('sort_order');
+    }
+
+    /**
+     * @return HasMany<PropertyImage, $this>
+     */
+    public function tourImages(): HasMany
+    {
+        return $this->hasMany(PropertyImage::class)
+            ->where('image_type', PropertyImageType::Tour)
+            ->orderBy('sort_order');
+    }
+
+    /**
      * @return BelongsToMany<PropertyFeature, $this>
      */
     public function features(): BelongsToMany
@@ -85,5 +134,34 @@ class Property extends Model
     public function constructionTasks(): HasMany
     {
         return $this->hasMany(ConstructionTask::class)->orderBy('sort_order');
+    }
+
+    public static function generateUniqueSlug(string $value, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($value) ?: 'property';
+        $slug = $base;
+        $suffix = 1;
+
+        while (static::query()
+            ->when($ignoreId !== null, fn ($query) => $query->whereKeyNot($ignoreId))
+            ->where('slug', $slug)
+            ->exists()) {
+            $slug = $base.'-'.$suffix;
+            $suffix++;
+        }
+
+        return $slug;
+    }
+
+    #[Scope]
+    protected function published(Builder $query): void
+    {
+        $query->where('is_published', true);
+    }
+
+    #[Scope]
+    protected function featured(Builder $query): void
+    {
+        $query->where('is_featured', true);
     }
 }

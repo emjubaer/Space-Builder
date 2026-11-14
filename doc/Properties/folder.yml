@@ -1,0 +1,27 @@
+info:
+  name: Properties
+  type: folder
+  seq: 5
+
+docs: |-
+  # Properties
+
+  Public published property endpoints. Draft / unpublished properties are never returned.
+
+  | Method | Path | Auth |
+  |--------|------|------|
+  | GET | `/api/property-types` | Public |
+  | GET | `/api/locations` | Public |
+  | GET | `/api/properties/featured` | Public |
+  | GET | `/api/properties` | Public |
+  | GET | `/api/properties/{slug}` | Public |
+  | GET | `/api/properties/{slug}/construction` | Public |
+
+  Query param `limit` controls result count on featured (default 6, max 20)
+  and page size on the list (default 15, max 100).
+
+  Property list supports optional filters: `property_type_id`, `location_id`, `status`
+  (AND combined). Use `/api/property-types` and `/api/locations` for filter dropdowns.
+
+  All responses use the ApiResponse envelope: `success`, `status`, `message`, `data`
+  (and `meta` for paginated list).

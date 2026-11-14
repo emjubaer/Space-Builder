@@ -176,7 +176,7 @@ export default function CreateAuthor({ onSuccess }: Props) {
 
                         <TabsContent value="existing" className="grid gap-4">
                             <div className="grid gap-2">
-                                <Label>User</Label>
+                                <Label required>User</Label>
                                 <UserCombobox
                                     value={form.user_id}
                                     selectedUser={selectedUser}
@@ -205,7 +205,9 @@ export default function CreateAuthor({ onSuccess }: Props) {
                                 <InputError message={errors.avatar} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="author-name">Name</Label>
+                                <Label htmlFor="author-name" required>
+                                    Name
+                                </Label>
                                 <Input
                                     id="author-name"
                                     value={form.name}
@@ -219,7 +221,9 @@ export default function CreateAuthor({ onSuccess }: Props) {
                                 <InputError message={errors.name} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="author-email">Email</Label>
+                                <Label htmlFor="author-email" required>
+                                    Email
+                                </Label>
                                 <Input
                                     id="author-email"
                                     type="email"
@@ -234,7 +238,9 @@ export default function CreateAuthor({ onSuccess }: Props) {
                                 <InputError message={errors.email} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="author-mobile">Mobile</Label>
+                                <Label htmlFor="author-mobile" required>
+                                    Mobile
+                                </Label>
                                 <Input
                                     id="author-mobile"
                                     value={form.mobile}
@@ -248,7 +254,7 @@ export default function CreateAuthor({ onSuccess }: Props) {
                                 <InputError message={errors.mobile} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="author-password">
+                                <Label htmlFor="author-password" required>
                                     Password
                                 </Label>
                                 <Input
@@ -265,7 +271,10 @@ export default function CreateAuthor({ onSuccess }: Props) {
                                 <InputError message={errors.password} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="author-password-confirmation">
+                                <Label
+                                    htmlFor="author-password-confirmation"
+                                    required
+                                >
                                     Confirm password
                                 </Label>
                                 <Input

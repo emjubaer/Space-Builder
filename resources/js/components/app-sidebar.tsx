@@ -1,5 +1,13 @@
 import { Link } from '@inertiajs/react';
-import { Building2, LayoutGrid, Mail, Newspaper, Users } from 'lucide-react';
+import {
+    Building2,
+    Home,
+    LayoutGrid,
+    Mail,
+    MessageSquareQuote,
+    Newspaper,
+    Users,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -27,6 +35,11 @@ export function AppSidebar() {
         isCurrentUrl(route('admin.blogs.index')) ||
         isCurrentUrl(route('admin.blogs.create')) ||
         /\/admin\/blogs\/\d+\/(edit|preview)/.test(currentUrl);
+
+    const propertiesActive =
+        isCurrentUrl(route('admin.properties.index')) ||
+        isCurrentUrl(route('admin.properties.create')) ||
+        /\/admin\/properties\/\d+\/edit/.test(currentUrl);
 
     const mainNavItems: NavItem[] = [
         {
@@ -62,6 +75,35 @@ export function AppSidebar() {
             title: 'Contact Messages',
             href: route('admin.website.contacts.index'),
             icon: Mail,
+        },
+        {
+            title: 'Testimonials',
+            href: route('admin.website.testimonials.index'),
+            icon: MessageSquareQuote,
+        },
+        {
+            title: 'Properties',
+            href: '#',
+            icon: Home,
+            items: [
+                {
+                    title: 'All Properties',
+                    href: route('admin.properties.index'),
+                    isActive: propertiesActive,
+                },
+                {
+                    title: 'Features',
+                    href: route('admin.properties.features.index'),
+                },
+                {
+                    title: 'Types',
+                    href: route('admin.properties.types.index'),
+                },
+                {
+                    title: 'Locations',
+                    href: route('admin.properties.locations.index'),
+                },
+            ],
         },
     ];
 

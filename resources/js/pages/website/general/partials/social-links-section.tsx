@@ -428,7 +428,7 @@ function SocialLinkFields({
     return (
         <>
             <div className="grid gap-2">
-                <Label>Platform</Label>
+                <Label required>Platform</Label>
                 <Select value={platform} onValueChange={setPlatform}>
                     <SelectTrigger>
                         <SelectValue placeholder="Select platform" />
@@ -444,7 +444,9 @@ function SocialLinkFields({
                 <InputError message={errors.platform} />
             </div>
             <div className="grid gap-2">
-                <Label htmlFor="social-url">URL</Label>
+                <Label htmlFor="social-url" required>
+                    URL
+                </Label>
                 <Input
                     id="social-url"
                     value={url}

@@ -103,7 +103,9 @@ export default function CreateCategory({ onSuccess }: Props) {
                 </DialogHeader>
                 <form onSubmit={submit} className="grid gap-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="category-name">Name</Label>
+                        <Label htmlFor="category-name" required>
+                            Name
+                        </Label>
                         <Input
                             id="category-name"
                             value={name}

@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\BlogStatus;
 use Database\Factories\BlogFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -74,6 +76,16 @@ class Blog extends Model
         return $this->hasMany(BlogImage::class)->orderBy('sort_order');
     }
 
+    /**
+     * @return HasMany<BlogImage, $this>
+     */
+    public function coverImages(): HasMany
+    {
+        return $this->hasMany(BlogImage::class)
+            ->where('image_type', 'cover')
+            ->orderBy('sort_order');
+    }
+
     public function markAsDraft(): void
     {
         $this->update([
@@ -92,6 +104,19 @@ class Blog extends Model
     public function isPublished(): bool
     {
         return $this->status === BlogStatus::Published;
+    }
+
+    /**
+     * @param  Builder<Blog>  $query
+     */
+    #[Scope]
+    protected function published(Builder $query): void
+    {
+        $query->where('status', BlogStatus::Published)
+            ->where(function (Builder $inner): void {
+                $inner->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            });
     }
 
     public static function generateUniqueSlug(string $value, ?int $ignoreId = null): string

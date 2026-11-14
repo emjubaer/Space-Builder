@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\PropertyImageType;
+use Database\Factories\PropertyImageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -16,6 +19,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class PropertyImage extends Model
 {
+    /** @use HasFactory<PropertyImageFactory> */
+    use HasFactory;
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'image_type' => PropertyImageType::class,
+            'sort_order' => 'integer',
+        ];
+    }
+
     /**
      * @return BelongsTo<Property, $this>
      */

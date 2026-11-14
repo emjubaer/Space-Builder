@@ -1,0 +1,25 @@
+info:
+  name: Blogs
+  type: folder
+  seq: 4
+
+docs: |-
+  # Blogs
+
+  Public published blog endpoints. Draft posts are never returned.
+
+  | Method | Path | Auth |
+  |--------|------|------|
+  | GET | `/api/blogs` | Public |
+  | GET | `/api/blogs?search=` | Public |
+  | GET | `/api/blogs/{slug}` | Public |
+  | GET | `/api/blogs/{slug}/related` | Public |
+
+  Query param `limit` controls page size on list/search (default 15, max 100)
+  and result count on related (default 4, max 20).
+
+  ## Images
+
+  - `featured_image_url` — single featured image on the blog row (`blogs.featured_image`)
+  - `cover_images` — cover gallery from `blog_images` (`image_type = cover`); empty array if none
+    Each item: `id`, `url`, `alt_text`, `caption`

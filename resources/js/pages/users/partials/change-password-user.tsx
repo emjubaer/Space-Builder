@@ -78,7 +78,9 @@ export default function ChangePasswordUser({
                 </DialogHeader>
                 <form onSubmit={submit} className="grid gap-4">
                     <div className="grid gap-2">
-                        <Label htmlFor={`password-${user.id}`}>Password</Label>
+                        <Label htmlFor={`password-${user.id}`} required>
+                            Password
+                        </Label>
                         <Input
                             id={`password-${user.id}`}
                             type="password"
@@ -88,7 +90,10 @@ export default function ChangePasswordUser({
                         <InputError message={errors.password} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor={`password-confirmation-${user.id}`}>
+                        <Label
+                            htmlFor={`password-confirmation-${user.id}`}
+                            required
+                        >
                             Confirm password
                         </Label>
                         <Input

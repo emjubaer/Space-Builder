@@ -245,7 +245,9 @@ export default function BlogCreate({ categories, authors, blog }: Props) {
                             <h2 className="mb-4 font-medium">Post Content</h2>
                             <div className="grid gap-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="title">Blog Title</Label>
+                                    <Label htmlFor="title" required>
+                                        Blog Title
+                                    </Label>
                                     <Input
                                         id="title"
                                         value={title}
@@ -304,7 +306,7 @@ export default function BlogCreate({ categories, authors, blog }: Props) {
                             </h2>
                             <div className="grid gap-4">
                                 <div className="grid gap-2">
-                                    <Label>Category</Label>
+                                    <Label required>Category</Label>
                                     <Select
                                         value={categoryId}
                                         onValueChange={setCategoryId}
@@ -326,7 +328,7 @@ export default function BlogCreate({ categories, authors, blog }: Props) {
                                     <InputError message={errors.category_id} />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label>Author</Label>
+                                    <Label required>Author</Label>
                                     <Select
                                         value={authorId}
                                         onValueChange={setAuthorId}

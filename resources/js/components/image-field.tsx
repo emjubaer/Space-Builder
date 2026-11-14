@@ -65,7 +65,9 @@ export default function ImageField(props: Props) {
     };
 
     const items: ImagePreviewItem[] = props.multiple
-        ? props.value
+        ? Array.isArray(props.value)
+            ? props.value
+            : []
         : props.value
           ? [props.value]
           : [];

@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             PermissionSeeder::class,
+            PropertyTypeSeeder::class,
+            PropertyFeatureSeeder::class,
+            ConstructionTaskSeeder::class,
         ]);
 
         $admin = User::query()->firstOrCreate(

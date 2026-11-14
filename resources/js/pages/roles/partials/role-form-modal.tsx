@@ -150,7 +150,9 @@ export default function RoleFormModal({
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="role-name">Name</Label>
+                                <Label htmlFor="role-name" required>
+                                    Name
+                                </Label>
                                 <Input
                                     id="role-name"
                                     name="name"

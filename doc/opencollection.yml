@@ -3,7 +3,7 @@ opencollection: 1.0.0
 info:
   name: Space Builder API
   description: |-
-    Space Builder public API: Sanctum auth, company profile, and contact form.
+    Space Builder public API: Sanctum auth, company profile, contact form, blogs, properties, property types, and locations.
 
     Open this `doc` folder as a Bruno collection and select the **Test** environment.
 

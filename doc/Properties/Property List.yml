@@ -1,0 +1,122 @@
+info:
+  name: Property List
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/properties"
+  params:
+    - name: page
+      value: "1"
+      type: query
+      disabled: true
+    - name: limit
+      value: "15"
+      type: query
+      disabled: true
+    - name: property_type_id
+      value: "1"
+      type: query
+      disabled: true
+    - name: location_id
+      value: "1"
+      type: query
+      disabled: true
+    - name: status
+      value: ongoing
+      type: query
+      disabled: true
+  headers:
+    - name: Accept
+      value: application/json
+  auth: none
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Property List
+
+  Returns a paginated list of published properties (newest `id` first).
+  Optional filters are combined with AND.
+
+  Example: `/api/properties?property_type_id=1&status=ongoing&location_id=2&limit=6`
+
+  ## Query parameters
+
+  | Field | Type | Required | Notes |
+  |-------|------|----------|-------|
+  | `page` | integer | no | Page number (default 1) |
+  | `limit` | integer | no | Page size (default 15, min 1, max 100) |
+  | `property_type_id` | integer | no | Filter by property type id |
+  | `location_id` | integer | no | Filter by location id |
+  | `status` | string | no | `upcoming`, `ongoing`, `completed`, or `sold_out` (`draft` not allowed) |
+
+  Status dropdown options (fixed enum, no lookup endpoint):
+
+  | Value | Label idea |
+  |-------|------------|
+  | `upcoming` | Upcoming |
+  | `ongoing` | Ongoing |
+  | `completed` | Completed |
+  | `sold_out` | Sold out |
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "success": true,
+    "status": 200,
+    "message": "Properties retrieved.",
+    "data": [
+      {
+        "id": 1,
+        "title": "Green Valley Residences",
+        "slug": "green-valley-residences",
+        "short_description": "Premium apartments in Gulshan",
+        "status": "ongoing",
+        "land_area": "10.00",
+        "land_area_unit": "katha",
+        "total_floors": 12,
+        "apartments_per_floor": 2,
+        "apartment_size": "1450.00",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "launch_date": "2025-01-15",
+        "expected_completion_date": "2027-06-30",
+        "is_featured": true,
+        "location": {
+          "id": 1,
+          "name": "Gulshan",
+          "address": "Road 12, Gulshan-2",
+          "city": "Dhaka",
+          "area": "Gulshan-2"
+        },
+        "property_type": {
+          "id": 1,
+          "name": "Residential",
+          "slug": "residential"
+        },
+        "cover_image": {
+          "id": 10,
+          "url": "http://localhost/storage/property-cover/cover.jpg",
+          "alt_text": "Project cover",
+          "caption": null,
+          "image_type": "cover"
+        }
+      }
+    ],
+    "meta": {
+      "current_page": 1,
+      "per_page": 15,
+      "total": 1,
+      "last_page": 1,
+      "from": 1,
+      "to": 1
+    }
+  }
+  ```

@@ -1,0 +1,87 @@
+info:
+  name: Blog Details
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/blogs/:slug"
+  params:
+    - name: slug
+      value: modern-home-design
+      type: path
+  headers:
+    - name: Accept
+      value: application/json
+  auth: none
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Blog Details
+
+  Returns a single published blog by slug, including HTML content, SEO fields,
+  featured image, and cover gallery images.
+
+  ## Path parameters
+
+  | Field | Type | Required |
+  |-------|------|----------|
+  | `slug` | string | yes |
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "data": {
+      "id": 1,
+      "title": "Modern Home Design",
+      "slug": "modern-home-design",
+      "excerpt": null,
+      "description": "Tips for modern homes",
+      "featured_image_url": "http://localhost/storage/blog-featured/featured.jpg",
+      "cover_images": [
+        {
+          "id": 10,
+          "url": "http://localhost/storage/blog-covers/cover-a.jpg",
+          "alt_text": "Hero cover",
+          "caption": null
+        },
+        {
+          "id": 11,
+          "url": "http://localhost/storage/blog-covers/cover-b.jpg",
+          "alt_text": null,
+          "caption": "Second cover"
+        }
+      ],
+      "reading_time": 3,
+      "published_at": "2026-11-11T12:00:00.000000Z",
+      "category": {
+        "id": 1,
+        "name": "Design",
+        "slug": "design"
+      },
+      "author": {
+        "id": 1,
+        "name": "Jane Doe",
+        "slug": "jane-doe",
+        "avatar_url": null
+      },
+      "html_content": "<p>Full article HTML</p>",
+      "meta_title": "Modern Home Design | Space Builder",
+      "meta_description": "Learn modern home design tips."
+    }
+  }
+  ```
+
+  ## Response example — `404 Not Found`
+
+  ```json
+  {
+    "message": "No query results for model [App\\Models\\Blog]."
+  }
+  ```

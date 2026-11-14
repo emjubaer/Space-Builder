@@ -7,10 +7,10 @@ variables:
     name: token
     description: Sanctum Bearer token (auto-filled by Login / Register)
   - name: email
-    value: api@example.com
+    value: dapi2@example.com
     description: Test user email
   - name: mobile
-    value: "01700000000"
+    value: "01700000054"
     description: Test user mobile number
   - secret: true
     name: password

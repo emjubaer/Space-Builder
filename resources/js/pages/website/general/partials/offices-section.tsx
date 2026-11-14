@@ -455,7 +455,9 @@ function OfficeFields({
     return (
         <>
             <div className="grid gap-2">
-                <Label htmlFor="office-name">Name</Label>
+                <Label htmlFor="office-name" required>
+                    Name
+                </Label>
                 <Input
                     id="office-name"
                     value={name}

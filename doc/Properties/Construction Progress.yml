@@ -1,0 +1,72 @@
+info:
+  name: Construction Progress
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/properties/:slug/construction"
+  headers:
+    - name: Accept
+      value: application/json
+  params:
+    - name: slug
+      value: inforisen-office
+      type: path
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: |-
+  # Construction Progress
+
+  Returns construction tasks for a published property (ordered by `sort_order`),
+  plus an overall progress average across all tasks.
+
+  ## Path parameters
+
+  | Field | Type | Required |
+  |-------|------|----------|
+  | `slug` | string | yes |
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "success": true,
+    "status": 200,
+    "message": "Construction progress retrieved.",
+    "data": {
+      "property": {
+        "id": 1,
+        "title": "Green Valley Residences",
+        "slug": "green-valley-residences"
+      },
+      "overall_progress": 42.5,
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Site Preparation",
+          "description": "Clearing and leveling",
+          "status": "completed",
+          "status_label": "Completed",
+          "progress_percentage": 100,
+          "sort_order": 1
+        },
+        {
+          "id": 2,
+          "title": "Foundation",
+          "description": null,
+          "status": "in_progress",
+          "status_label": "In progress",
+          "progress_percentage": 60,
+          "sort_order": 2
+        }
+      ]
+    }
+  }
+  ```

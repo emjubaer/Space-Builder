@@ -103,7 +103,9 @@ export default function UpdateUser({
                 </DialogHeader>
                 <form onSubmit={submit} className="grid gap-4">
                     <div className="grid gap-2">
-                        <Label htmlFor={`name-${user.id}`}>Name</Label>
+                        <Label htmlFor={`name-${user.id}`} required>
+                            Name
+                        </Label>
                         <Input
                             id={`name-${user.id}`}
                             value={form.name}
@@ -117,7 +119,9 @@ export default function UpdateUser({
                         <InputError message={errors.name} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor={`email-${user.id}`}>Email</Label>
+                        <Label htmlFor={`email-${user.id}`} required>
+                            Email
+                        </Label>
                         <Input
                             id={`email-${user.id}`}
                             type="email"
@@ -132,7 +136,9 @@ export default function UpdateUser({
                         <InputError message={errors.email} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor={`mobile-${user.id}`}>Mobile</Label>
+                        <Label htmlFor={`mobile-${user.id}`} required>
+                            Mobile
+                        </Label>
                         <Input
                             id={`mobile-${user.id}`}
                             value={form.mobile}

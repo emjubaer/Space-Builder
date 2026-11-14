@@ -1,4 +1,9 @@
 import { Head } from '@inertiajs/react';
+import { useEffect } from 'react';
+import '../../../css/rich-text-editor.css';
+
+const GOOGLE_FONTS_HREF =
+    'https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap';
 
 type BlogPreview = {
     id: number;
@@ -24,6 +29,16 @@ type Props = {
 };
 
 export default function BlogPreview({ blog }: Props) {
+    useEffect(() => {
+        if (document.querySelector(`link[href="${GOOGLE_FONTS_HREF}"]`)) {
+            return;
+        }
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = GOOGLE_FONTS_HREF;
+        document.head.appendChild(link);
+    }, []);
+
     return (
         <>
             <Head title={`Preview: ${blog.title}`} />
@@ -80,7 +95,7 @@ export default function BlogPreview({ blog }: Props) {
                     </div>
 
                     <div
-                        className="prose prose-zinc max-w-none"
+                        className="blog-rich-content ql-editor prose prose-zinc max-w-none"
                         dangerouslySetInnerHTML={{
                             __html: blog.html_content || '',
                         }}

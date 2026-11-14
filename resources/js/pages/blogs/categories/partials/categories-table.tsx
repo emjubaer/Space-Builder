@@ -229,7 +229,7 @@ export default function CategoriesTable({ categories, onChanged }: Props) {
                     </DialogHeader>
                     <form onSubmit={submitUpdate} className="grid gap-4">
                         <div className="grid gap-2">
-                            <Label>Name</Label>
+                            <Label required>Name</Label>
                             <Input
                                 value={name}
                                 onChange={(event) => setName(event.target.value)}

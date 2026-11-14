@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\LocationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -18,6 +20,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Location extends Model
 {
+    /** @use HasFactory<LocationFactory> */
+    use HasFactory;
+
     /**
      * @return array<string, string>
      */
@@ -35,5 +40,10 @@ class Location extends Model
     public function properties(): HasMany
     {
         return $this->hasMany(Property::class);
+    }
+
+    public function hasProperties(): bool
+    {
+        return $this->properties()->exists();
     }
 }

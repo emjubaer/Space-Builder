@@ -20,11 +20,10 @@ class AuthController extends Controller
     {
         $result = $this->auth->register($request->validated());
 
-        return response()->json([
-            'message' => __('Registered successfully.'),
+        return $this->success('Registered successfully.', 201, [
             'token' => $result['token'],
             'user' => new UserResource($result['user']),
-        ], 201);
+        ]);
     }
 
     public function login(LoginRequest $request): JsonResponse

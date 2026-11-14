@@ -166,7 +166,9 @@ export default function WebsiteGeneralIndex({ profile, platforms }: Props) {
                 >
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="grid gap-2">
-                            <Label htmlFor="company_name">Company name</Label>
+                            <Label htmlFor="company_name" required>
+                                Company name
+                            </Label>
                             <Input
                                 id="company_name"
                                 value={companyName}

@@ -1,0 +1,465 @@
+/*
+ * Bundled with the Quill editor component (not via Tailwind app.css),
+ * so picker labels and content styles always ship with the blog create chunk.
+ */
+
+.rich-text-editor {
+    /* Must stay visible so font/size picker dropdowns are not clipped */
+    overflow: visible;
+}
+
+.rich-text-editor .ql-toolbar.ql-snow {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.125rem;
+    row-gap: 0.25rem;
+    overflow: visible;
+}
+
+.rich-text-editor .ql-snow .ql-picker {
+    position: relative;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-expanded {
+    z-index: 60;
+}
+
+.rich-text-editor .ql-snow .ql-picker-options {
+    z-index: 60;
+    max-height: min(280px, 50vh);
+    overflow-y: auto;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border, #e5e7eb);
+    background: var(--popover, #fff);
+    box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+    padding: 0.35rem;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-expanded .ql-picker-options {
+    top: 100%;
+    bottom: auto;
+    margin-top: 0.25rem;
+}
+
+.rich-text-editor .ql-snow .ql-picker-options .ql-picker-item {
+    border-radius: 0.375rem;
+    padding: 0.35rem 0.5rem;
+}
+
+.rich-text-editor .ql-snow .ql-picker-options .ql-picker-item:hover {
+    background: var(--accent, #f4f4f5);
+    color: var(--accent-foreground, #18181b);
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size {
+    width: 72px;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item::before {
+    content: "Normal";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before {
+    content: "Normal";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10pt"]::before {
+    content: "10";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="11pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="11pt"]::before {
+    content: "11";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="12pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="12pt"]::before {
+    content: "12";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14pt"]::before {
+    content: "14";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16pt"]::before {
+    content: "16";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="18pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18pt"]::before {
+    content: "18";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20pt"]::before {
+    content: "20";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="24pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24pt"]::before {
+    content: "24";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="32pt"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="32pt"]::before {
+    content: "32";
+}
+
+/* Quill already supports content: attr(data-label) when data-label is set via JS. */
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-label[data-label]:not([data-label=""])::before,
+.rich-text-editor .ql-snow .ql-picker.ql-size .ql-picker-item[data-label]:not([data-label=""])::before {
+    content: attr(data-label);
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font {
+    width: 140px;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item::before {
+    content: "Sans Serif";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label:not([data-value])::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item:not([data-value])::before {
+    content: "Sans Serif";
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before {
+    content: "Arial";
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="helvetica"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="helvetica"]::before {
+    content: "Helvetica";
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="georgia"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before {
+    content: "Georgia";
+    font-family: Georgia, serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times-new-roman"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times-new-roman"]::before {
+    content: "Times New Roman";
+    font-family: "Times New Roman", Times, serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="courier-new"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier-new"]::before {
+    content: "Courier New";
+    font-family: "Courier New", Courier, monospace;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before {
+    content: "Verdana";
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="tahoma"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="tahoma"]::before {
+    content: "Tahoma";
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="trebuchet-ms"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="trebuchet-ms"]::before {
+    content: "Trebuchet MS";
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="palatino"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="palatino"]::before {
+    content: "Palatino";
+    font-family: Palatino, "Palatino Linotype", serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="garamond"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="garamond"]::before {
+    content: "Garamond";
+    font-family: Garamond, serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before {
+    content: "Roboto";
+    font-family: Roboto, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="open-sans"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="open-sans"]::before {
+    content: "Open Sans";
+    font-family: "Open Sans", sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lato"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lato"]::before {
+    content: "Lato";
+    font-family: Lato, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="montserrat"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="montserrat"]::before {
+    content: "Montserrat";
+    font-family: Montserrat, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="poppins"]::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="poppins"]::before {
+    content: "Poppins";
+    font-family: Poppins, sans-serif;
+}
+
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-label[data-label]:not([data-label=""])::before,
+.rich-text-editor .ql-snow .ql-picker.ql-font .ql-picker-item[data-label]:not([data-label=""])::before {
+    content: attr(data-label);
+}
+
+.ql-font-arial {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.ql-font-helvetica {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.ql-font-georgia {
+    font-family: Georgia, serif;
+}
+
+.ql-font-times-new-roman {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.ql-font-courier-new {
+    font-family: "Courier New", Courier, monospace;
+}
+
+.ql-font-verdana {
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+.ql-font-tahoma {
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.ql-font-trebuchet-ms {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.ql-font-palatino {
+    font-family: Palatino, "Palatino Linotype", serif;
+}
+
+.ql-font-garamond {
+    font-family: Garamond, serif;
+}
+
+.ql-font-roboto {
+    font-family: Roboto, sans-serif;
+}
+
+.ql-font-open-sans {
+    font-family: "Open Sans", sans-serif;
+}
+
+.ql-font-lato {
+    font-family: Lato, sans-serif;
+}
+
+.ql-font-montserrat {
+    font-family: Montserrat, sans-serif;
+}
+
+.ql-font-poppins {
+    font-family: Poppins, sans-serif;
+}
+
+/*
+ * Shared Quill HTML rendering (blog preview + editor body).
+ */
+.blog-rich-content.ql-editor {
+    padding: 0;
+    overflow: visible;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.625;
+    color: inherit;
+}
+
+.blog-rich-content.ql-editor > *:first-child {
+    margin-top: 0;
+}
+
+.blog-rich-content.ql-editor p,
+.rich-text-editor .ql-editor p {
+    /* Visible paragraph gaps for typed + pasted content.
+       Pasted Docs margin-top/bottom inline styles still win. */
+    margin: 0 0 0.75em;
+}
+
+.blog-rich-content.ql-editor p:last-child,
+.rich-text-editor .ql-editor p:last-child {
+    margin-bottom: 0;
+}
+
+/* Keep Docs blank lines (<p><br></p>) visibly tall */
+.blog-rich-content.ql-editor p:has(> br:only-child),
+.rich-text-editor .ql-editor p:has(> br:only-child) {
+    min-height: 1.25em;
+    margin-bottom: 0.75em;
+}
+
+.blog-rich-content.ql-editor h1,
+.rich-text-editor .ql-editor h1 {
+    font-size: 1.75em;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 1.25em 0 0.5em;
+}
+
+.blog-rich-content.ql-editor h2,
+.rich-text-editor .ql-editor h2 {
+    font-size: 1.4em;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 1.15em 0 0.45em;
+}
+
+.blog-rich-content.ql-editor h3,
+.rich-text-editor .ql-editor h3 {
+    font-size: 1.15em;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 1em 0 0.4em;
+}
+
+.blog-rich-content.ql-editor ul,
+.blog-rich-content.ql-editor ol,
+.rich-text-editor .ql-editor ul,
+.rich-text-editor .ql-editor ol {
+    margin: 1em 0;
+    padding: 0.65rem 0.85rem 0.65rem 0.35rem;
+    border-radius: 0.65rem;
+    background: color-mix(in oklab, var(--muted, #f4f4f5) 70%, transparent);
+    border: 1px solid color-mix(in oklab, var(--border, #e5e7eb) 80%, transparent);
+}
+
+.blog-rich-content.ql-editor li,
+.rich-text-editor .ql-editor li {
+    margin: 0.35em 0;
+    padding-left: 1.75em;
+    line-height: 1.55;
+}
+
+.blog-rich-content.ql-editor li > p,
+.blog-rich-content.ql-editor li > div,
+.rich-text-editor .ql-editor li > p,
+.rich-text-editor .ql-editor li > div {
+    display: inline;
+    margin: 0;
+}
+
+/* Attractive Quill 2 list markers (bullet / ordered via .ql-ui) */
+.blog-rich-content.ql-editor li > .ql-ui:before,
+.rich-text-editor .ql-editor li > .ql-ui:before {
+    margin-left: -1.75em;
+    margin-right: 0.45em;
+    width: 1.35em;
+    font-weight: 600;
+    color: var(--primary, #7c3aed);
+}
+
+.blog-rich-content.ql-editor li[data-list="bullet"] > .ql-ui:before,
+.rich-text-editor .ql-editor li[data-list="bullet"] > .ql-ui:before {
+    content: "";
+    display: inline-block;
+    width: 0.45em;
+    height: 0.45em;
+    margin-top: 0.45em;
+    margin-left: -1.45em;
+    margin-right: 0.7em;
+    border-radius: 999px;
+    background: var(--primary, #7c3aed);
+    vertical-align: top;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary, #7c3aed) 18%, transparent);
+}
+
+.blog-rich-content.ql-editor li[data-list="ordered"] > .ql-ui:before,
+.rich-text-editor .ql-editor li[data-list="ordered"] > .ql-ui:before {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4em;
+    height: 1.4em;
+    margin-left: -1.85em;
+    margin-right: 0.55em;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--primary, #7c3aed) 14%, transparent);
+    color: var(--primary, #7c3aed);
+    font-size: 0.78em;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Nested lists: quieter surface so hierarchy reads clearly */
+.blog-rich-content.ql-editor li > ol,
+.blog-rich-content.ql-editor li > ul,
+.rich-text-editor .ql-editor li > ol,
+.rich-text-editor .ql-editor li > ul {
+    margin: 0.45em 0 0.25em;
+    padding: 0.35rem 0.5rem 0.35rem 0.15rem;
+    background: transparent;
+    border: none;
+}
+
+.blog-rich-content.ql-editor blockquote,
+.rich-text-editor .ql-editor blockquote {
+    margin: 1em 0;
+    padding-left: 1em;
+    border-left: 4px solid #e5e7eb;
+    color: #6b7280;
+}
+
+.blog-rich-content.ql-editor a,
+.rich-text-editor .ql-editor a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.blog-rich-content.ql-editor img,
+.blog-rich-content .ql-editor-image,
+.rich-text-editor .ql-editor img.ql-editor-image {
+    max-width: 100%;
+    height: auto;
+}
+
+.blog-rich-content.ql-editor .ql-align-center,
+.rich-text-editor .ql-editor .ql-align-center {
+    text-align: center;
+}
+
+.blog-rich-content.ql-editor .ql-align-right,
+.rich-text-editor .ql-editor .ql-align-right {
+    text-align: right;
+}
+
+.blog-rich-content.ql-editor .ql-align-justify,
+.rich-text-editor .ql-editor .ql-align-justify {
+    text-align: justify;
+}

@@ -1,0 +1,81 @@
+info:
+  name: Featured Properties
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/properties/featured"
+  params:
+    - name: limit
+      value: "6"
+      type: query
+      disabled: true
+  headers:
+    - name: Accept
+      value: application/json
+  auth: none
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Featured Properties
+
+  Returns published properties marked as featured (newest `id` first).
+
+  ## Query parameters
+
+  | Field | Type | Required | Notes |
+  |-------|------|----------|-------|
+  | `limit` | integer | no | Result count (default 6, min 1, max 20) |
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "success": true,
+    "status": 200,
+    "message": "Featured properties retrieved.",
+    "data": [
+      {
+        "id": 1,
+        "title": "Green Valley Residences",
+        "slug": "green-valley-residences",
+        "short_description": "Premium apartments in Gulshan",
+        "status": "ongoing",
+        "land_area": "10.00",
+        "land_area_unit": "katha",
+        "total_floors": 12,
+        "apartments_per_floor": 2,
+        "apartment_size": "1450.00",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "launch_date": "2025-01-15",
+        "expected_completion_date": "2027-06-30",
+        "is_featured": true,
+        "location": {
+          "id": 1,
+          "name": "Gulshan",
+          "city": "Dhaka",
+          "area": "Gulshan-2"
+        },
+        "property_type": {
+          "id": 1,
+          "name": "Residential",
+          "slug": "residential"
+        },
+        "cover_image": {
+          "id": 10,
+          "url": "http://localhost/storage/property-cover/cover.jpg",
+          "alt_text": "Project cover",
+          "caption": null,
+          "image_type": "cover"
+        }
+      }
+    ]
+  }
+  ```

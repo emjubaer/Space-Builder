@@ -102,7 +102,9 @@ export default function AddUser({ roles, onSuccess }: Props) {
                 </DialogHeader>
                 <form onSubmit={submit} className="grid gap-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name" required>
+                            Name
+                        </Label>
                         <Input
                             id="name"
                             value={form.name}
@@ -116,7 +118,9 @@ export default function AddUser({ roles, onSuccess }: Props) {
                         <InputError message={errors.name} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email" required>
+                            Email
+                        </Label>
                         <Input
                             id="email"
                             type="email"
@@ -131,7 +135,9 @@ export default function AddUser({ roles, onSuccess }: Props) {
                         <InputError message={errors.email} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="mobile">Mobile</Label>
+                        <Label htmlFor="mobile" required>
+                            Mobile
+                        </Label>
                         <Input
                             id="mobile"
                             value={form.mobile}
@@ -145,7 +151,9 @@ export default function AddUser({ roles, onSuccess }: Props) {
                         <InputError message={errors.mobile} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password" required>
+                            Password
+                        </Label>
                         <Input
                             id="password"
                             type="password"
@@ -160,7 +168,7 @@ export default function AddUser({ roles, onSuccess }: Props) {
                         <InputError message={errors.password} />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation">
+                        <Label htmlFor="password_confirmation" required>
                             Confirm password
                         </Label>
                         <Input
