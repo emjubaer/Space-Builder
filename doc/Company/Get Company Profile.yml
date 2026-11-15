@@ -28,6 +28,9 @@ docs: |-
 
   ```json
   {
+    "success": true,
+    "status": 200,
+    "message": "Company profile retrieved.",
     "data": {
       "company_name": "Space Builder",
       "tagline": "Building better spaces",

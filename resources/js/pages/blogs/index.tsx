@@ -14,6 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import BlogsTable, { type BlogRow } from '@/pages/blogs/partials/blogs-table';
@@ -39,6 +40,7 @@ export default function BlogsIndex({
     authors,
     statuses,
 }: Props) {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -115,12 +117,14 @@ export default function BlogsIndex({
                         title="Posts"
                         description="Manage blog posts"
                     />
-                    <Button asChild>
-                        <Link href={route('admin.blogs.create')}>
-                            <Plus className="size-4" />
-                            Create Post
-                        </Link>
-                    </Button>
+                    {can('blog_create') && (
+                        <Button asChild>
+                            <Link href={route('admin.blogs.create')}>
+                                <Plus className="size-4" />
+                                Create Post
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center">

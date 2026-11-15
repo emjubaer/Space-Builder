@@ -13,6 +13,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import CreateTestimonial from '@/pages/website/testimonials/partials/create-testimonial';
@@ -31,6 +32,7 @@ type Props = {
 };
 
 export default function TestimonialsIndex({ types, videoProviders }: Props) {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -104,11 +106,13 @@ export default function TestimonialsIndex({ types, videoProviders }: Props) {
                         title="Testimonials"
                         description="Manage customer reviews and video testimonials."
                     />
-                    <CreateTestimonial
-                        types={types}
-                        videoProviders={videoProviders}
-                        onSuccess={refresh}
-                    />
+                    {can('testimonial_create') && (
+                        <CreateTestimonial
+                            types={types}
+                            videoProviders={videoProviders}
+                            onSuccess={refresh}
+                        />
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

@@ -2,6 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import { MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import ImageUpload from '@/components/image-upload';
+import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -45,6 +47,7 @@ export type AuthorRow = {
         id: number;
         name: string | null;
         email: string;
+        avatar?: string | null;
     } | null;
 };
 
@@ -59,20 +62,59 @@ export default function AuthorsTable({ authors, onChanged }: Props) {
     const [bio, setBio] = useState('');
     const [designation, setDesignation] = useState('');
     const [status, setStatus] = useState(true);
+    const [avatar, setAvatar] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [removeAvatar, setRemoveAvatar] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const openEdit = (author: AuthorRow) => {
+        setEditAuthor(author);
+        setBio(author.bio || '');
+        setDesignation(author.designation || '');
+        setStatus(author.status);
+        setAvatar(null);
+        setAvatarPreview(author.user?.avatar || null);
+        setRemoveAvatar(false);
+        setErrors({});
+    };
 
     const updateMutation = useMutation({
-        mutationFn: () =>
-            webApi.put(route('admin.blogs.authors.update', editAuthor!.id), {
-                bio,
-                designation,
-                status,
-            }),
+        mutationFn: () => {
+            const formData = new FormData();
+            formData.append('_method', 'PUT');
+            formData.append('bio', bio);
+            formData.append('designation', designation);
+            formData.append('status', status ? '1' : '0');
+            formData.append('remove_avatar', removeAvatar ? '1' : '0');
+
+            if (avatar) {
+                formData.append('avatar', avatar);
+            }
+
+            return webApi.post(
+                route('admin.blogs.authors.update', editAuthor!.id),
+                formData,
+            );
+        },
         onSuccess: () => {
             toast.success('Author updated successfully.');
             setEditAuthor(null);
+            setAvatar(null);
+            setRemoveAvatar(false);
+            setErrors({});
             onChanged();
         },
-        onError: (error: { response?: { data?: { message?: string } } }) => {
+        onError: (error: {
+            response?: {
+                data?: { message?: string; errors?: Record<string, string[]> };
+            };
+        }) => {
+            const serverErrors = error.response?.data?.errors || {};
+            const mapped: Record<string, string> = {};
+            Object.entries(serverErrors).forEach(([field, messages]) => {
+                mapped[field] = messages[0];
+            });
+            setErrors(mapped);
             toast.error(
                 error.response?.data?.message || 'Failed to update author.',
             );
@@ -124,7 +166,34 @@ export default function AuthorsTable({ authors, onChanged }: Props) {
                             <TableRow key={author.id}>
                                 <TableCell>{index + 1}</TableCell>
                                 <TableCell>
-                                    {author.user?.name || author.name || '—'}
+                                    <div className="flex items-center gap-2">
+                                        {author.user?.avatar ? (
+                                            <img
+                                                src={author.user.avatar}
+                                                alt={
+                                                    author.user?.name ||
+                                                    author.name ||
+                                                    'Author'
+                                                }
+                                                className="size-8 rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+                                                {(
+                                                    author.user?.name ||
+                                                    author.name ||
+                                                    '?'
+                                                )
+                                                    .charAt(0)
+                                                    .toUpperCase()}
+                                            </div>
+                                        )}
+                                        <span>
+                                            {author.user?.name ||
+                                                author.name ||
+                                                '—'}
+                                        </span>
+                                    </div>
                                 </TableCell>
                                 <TableCell>
                                     {author.user?.email || '—'}
@@ -157,15 +226,7 @@ export default function AuthorsTable({ authors, onChanged }: Props) {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem
-                                                onSelect={() => {
-                                                    setEditAuthor(author);
-                                                    setBio(author.bio || '');
-                                                    setDesignation(
-                                                        author.designation ||
-                                                            '',
-                                                    );
-                                                    setStatus(author.status);
-                                                }}
+                                                onSelect={() => openEdit(author)}
                                             >
                                                 Edit
                                             </DropdownMenuItem>
@@ -200,6 +261,22 @@ export default function AuthorsTable({ authors, onChanged }: Props) {
                     </DialogHeader>
                     <div className="grid gap-4">
                         <div className="grid gap-2">
+                            <Label>Avatar</Label>
+                            <ImageUpload
+                                value={removeAvatar ? null : avatarPreview}
+                                onChange={(file) => {
+                                    setAvatar(file);
+                                    if (file) {
+                                        setRemoveAvatar(false);
+                                    } else {
+                                        setRemoveAvatar(true);
+                                        setAvatarPreview(null);
+                                    }
+                                }}
+                            />
+                            <InputError message={errors.avatar} />
+                        </div>
+                        <div className="grid gap-2">
                             <Label>Designation</Label>
                             <Input
                                 value={designation}
@@ -207,6 +284,7 @@ export default function AuthorsTable({ authors, onChanged }: Props) {
                                     setDesignation(event.target.value)
                                 }
                             />
+                            <InputError message={errors.designation} />
                         </div>
                         <div className="grid gap-2">
                             <Label>Bio</Label>
@@ -214,6 +292,7 @@ export default function AuthorsTable({ authors, onChanged }: Props) {
                                 value={bio}
                                 onChange={(event) => setBio(event.target.value)}
                             />
+                            <InputError message={errors.bio} />
                         </div>
                         <div className="flex items-center gap-2">
                             <input

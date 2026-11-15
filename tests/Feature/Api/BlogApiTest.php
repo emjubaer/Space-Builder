@@ -11,13 +11,18 @@ test('public can list only published blogs with pagination meta', function () {
 
     $this->getJson(route('api.blogs.index'))
         ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('status', 200)
+        ->assertJsonPath('message', 'Blogs retrieved.')
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.title', 'Live Post')
         ->assertJsonPath('data.0.slug', 'live-post')
         ->assertJsonStructure([
+            'success',
+            'status',
+            'message',
             'data',
-            'links' => ['first', 'last', 'prev', 'next'],
-            'meta' => ['current_page', 'per_page', 'total'],
+            'meta' => ['current_page', 'per_page', 'total', 'last_page', 'from', 'to'],
         ]);
 });
 
@@ -62,11 +67,16 @@ test('public can fetch published blog details by slug', function () {
 
     $this->getJson(route('api.blogs.show', ['slug' => $blog->slug]))
         ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Blog retrieved.')
         ->assertJsonPath('data.title', 'Detail Post')
         ->assertJsonPath('data.slug', 'detail-post')
         ->assertJsonPath('data.html_content', '<p>Full content</p>')
         ->assertJsonPath('data.meta_title', 'Detail SEO')
         ->assertJsonStructure([
+            'success',
+            'status',
+            'message',
             'data' => [
                 'id',
                 'title',
@@ -190,6 +200,8 @@ test('public can fetch related blogs from the same category with limit', functio
     ]));
 
     $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Related blogs retrieved.')
         ->assertJsonCount(2, 'data');
 
     $slugs = collect($response->json('data'))->pluck('slug')->all();

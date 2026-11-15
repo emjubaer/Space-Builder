@@ -2,12 +2,14 @@
 
 use App\Enums\UserRole;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     $this->seed(RoleSeeder::class);
+    $this->seed(PermissionSeeder::class);
 });
 
 function adminUser(): User

@@ -28,6 +28,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import ConstructionProgressDialog from '@/pages/properties/partials/construction-progress-dialog';
@@ -60,6 +61,7 @@ export default function PropertiesTable({
     onChanged,
     constructionTaskStatuses,
 }: Props) {
+    const can = useCan();
     const [deleteProperty, setDeleteProperty] = useState<PropertyRow | null>(
         null,
     );
@@ -151,34 +153,44 @@ export default function PropertiesTable({
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem asChild>
-                                                <Link
-                                                    href={route(
-                                                        'admin.properties.edit',
-                                                        property.id,
-                                                    )}
+                                            {can('property_update') && (
+                                                <DropdownMenuItem asChild>
+                                                    <Link
+                                                        href={route(
+                                                            'admin.properties.edit',
+                                                            property.id,
+                                                        )}
+                                                    >
+                                                        Edit
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            )}
+                                            {can('property_update') && (
+                                                <DropdownMenuItem
+                                                    onClick={() =>
+                                                        setProgressProperty(
+                                                            property,
+                                                        )
+                                                    }
                                                 >
-                                                    Edit
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                onClick={() =>
-                                                    setProgressProperty(
-                                                        property,
-                                                    )
-                                                }
-                                            >
-                                                Update Progress
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                className="text-destructive"
-                                                onClick={() =>
-                                                    setDeleteProperty(property)
-                                                }
-                                            >
-                                                Delete
-                                            </DropdownMenuItem>
+                                                    Update Progress
+                                                </DropdownMenuItem>
+                                            )}
+                                            {can('property_delete') && (
+                                                <>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem
+                                                        className="text-destructive"
+                                                        onClick={() =>
+                                                            setDeleteProperty(
+                                                                property,
+                                                            )
+                                                        }
+                                                    >
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>

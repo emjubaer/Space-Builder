@@ -60,8 +60,13 @@ docs: |-
         "location": {
           "id": 1,
           "name": "Gulshan",
+          "address": "Road 12, Gulshan-2",
           "city": "Dhaka",
-          "area": "Gulshan-2"
+          "area": "Gulshan-2",
+          "latitude": "23.7808870",
+          "longitude": "90.4166640",
+          "map_url": "https://maps.google.com/?q=23.78,90.41",
+          "image_url": null
         },
         "property_type": {
           "id": 1,

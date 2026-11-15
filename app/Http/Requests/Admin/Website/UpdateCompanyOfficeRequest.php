@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests\Admin\Website;
 
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCompanyOfficeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('company_profile_update') ?? false;
     }
 
     /**

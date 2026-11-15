@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin\Blog\Author;
 
-use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -12,7 +11,7 @@ class StoreBlogAuthorRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('blog_author_create') ?? false;
     }
 
     /**

@@ -9,29 +9,42 @@ use App\Http\Resources\Api\BlogResource;
 use App\Http\Resources\Api\BlogSummaryResource;
 use App\Services\BlogService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BlogController extends Controller
 {
     public function __construct(private BlogService $blogs) {}
 
-    public function index(IndexBlogsRequest $request): AnonymousResourceCollection
+    public function index(IndexBlogsRequest $request): JsonResponse
     {
-        $blogs = $this->blogs->paginate(
+        $paginator = $this->blogs->paginate(
             $request->search(),
             $request->limit(),
         );
 
-        return BlogSummaryResource::collection($blogs);
+        return $this->success(
+            'Blogs retrieved.',
+            200,
+            BlogSummaryResource::collection($paginator)->resolve(),
+            [
+                'current_page' => $paginator->currentPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+            ],
+        );
     }
 
     public function show(string $slug): JsonResponse
     {
         $blog = $this->blogs->findPublishedBySlug($slug);
 
-        return response()->json([
-            'data' => (new BlogResource($blog))->resolve(),
-        ]);
+        return $this->success(
+            'Blog retrieved.',
+            200,
+            (new BlogResource($blog))->resolve(),
+        );
     }
 
     public function related(RelatedBlogsRequest $request, string $slug): JsonResponse
@@ -39,8 +52,10 @@ class BlogController extends Controller
         $blog = $this->blogs->findPublishedBySlug($slug);
         $related = $this->blogs->related($blog, $request->limit());
 
-        return response()->json([
-            'data' => BlogSummaryResource::collection($related)->resolve(),
-        ]);
+        return $this->success(
+            'Related blogs retrieved.',
+            200,
+            BlogSummaryResource::collection($related)->resolve(),
+        );
     }
 }

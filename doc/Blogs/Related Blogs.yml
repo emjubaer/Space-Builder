@@ -46,6 +46,9 @@ docs: |-
 
   ```json
   {
+    "success": true,
+    "status": 200,
+    "message": "Related blogs retrieved.",
     "data": [
       {
         "id": 2,

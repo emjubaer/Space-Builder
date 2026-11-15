@@ -6,6 +6,7 @@ import Heading from '@/components/heading';
 import Pagination from '@/components/pagination';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import type { PermissionItem } from '@/lib/permissions';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export default function RolesIndex({ permissions }: Props) {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -81,10 +83,12 @@ export default function RolesIndex({ permissions }: Props) {
                         title="Roles & Permissions"
                         description="Manage roles and access permissions"
                     />
-                    <CreateRole
-                        permissions={permissions}
-                        onSuccess={refresh}
-                    />
+                    {can('role_create') && (
+                        <CreateRole
+                            permissions={permissions}
+                            onSuccess={refresh}
+                        />
+                    )}
                 </div>
 
                 <RolePermissionTabs active="roles" />

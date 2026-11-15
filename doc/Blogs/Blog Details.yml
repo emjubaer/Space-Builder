@@ -37,6 +37,9 @@ docs: |-
 
   ```json
   {
+    "success": true,
+    "status": 200,
+    "message": "Blog retrieved.",
     "data": {
       "id": 1,
       "title": "Modern Home Design",

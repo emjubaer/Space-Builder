@@ -13,7 +13,7 @@ class LocationController extends Controller
     {
         $locations = Location::query()
             ->orderBy('name')
-            ->get(['id', 'name', 'city', 'area']);
+            ->get();
 
         return $this->success(
             'Locations retrieved.',

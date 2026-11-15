@@ -36,7 +36,17 @@ test('public can list only published properties with api response meta', functio
                     'id',
                     'title',
                     'slug',
-                    'location' => ['id', 'name', 'address', 'city', 'area'],
+                    'location' => [
+                        'id',
+                        'name',
+                        'address',
+                        'city',
+                        'area',
+                        'latitude',
+                        'longitude',
+                        'map_url',
+                        'image_url',
+                    ],
                     'property_type' => ['id', 'name', 'slug'],
                     'cover_image',
                 ],
@@ -45,10 +55,12 @@ test('public can list only published properties with api response meta', functio
         ]);
 });
 
-test('property list location includes address', function () {
+test('property list location includes address and coordinates', function () {
     $location = Location::factory()->create([
         'name' => 'Gulshan',
         'address' => 'Road 12, Gulshan-2',
+        'latitude' => '23.7808870',
+        'longitude' => '90.4166640',
     ]);
 
     Property::factory()->published()->create([
@@ -58,7 +70,9 @@ test('property list location includes address', function () {
 
     $this->getJson(route('api.properties.index'))
         ->assertOk()
-        ->assertJsonPath('data.0.location.address', 'Road 12, Gulshan-2');
+        ->assertJsonPath('data.0.location.address', 'Road 12, Gulshan-2')
+        ->assertJsonPath('data.0.location.latitude', '23.7808870')
+        ->assertJsonPath('data.0.location.longitude', '90.4166640');
 });
 
 test('public can filter properties by type location and status', function () {
@@ -152,8 +166,22 @@ test('public can list active property types', function () {
 });
 
 test('public can list locations ordered by name', function () {
-    Location::factory()->create(['name' => 'Zawarde', 'city' => 'Dhaka', 'area' => 'A']);
-    Location::factory()->create(['name' => 'Banani', 'city' => 'Dhaka', 'area' => 'B']);
+    Location::factory()->create([
+        'name' => 'Zawarde',
+        'city' => 'Dhaka',
+        'area' => 'A',
+        'address' => 'Zawarde Road',
+        'latitude' => '23.8100000',
+        'longitude' => '90.4100000',
+        'map_url' => 'https://maps.google.com/?q=23.81,90.41',
+    ]);
+    Location::factory()->create([
+        'name' => 'Banani',
+        'city' => 'Dhaka',
+        'area' => 'B',
+        'latitude' => '23.7940000',
+        'longitude' => '90.4040000',
+    ]);
 
     $this->getJson(route('api.locations.index'))
         ->assertOk()
@@ -162,9 +190,23 @@ test('public can list locations ordered by name', function () {
         ->assertJsonCount(2, 'data')
         ->assertJsonPath('data.0.name', 'Banani')
         ->assertJsonPath('data.1.name', 'Zawarde')
+        ->assertJsonPath('data.1.address', 'Zawarde Road')
+        ->assertJsonPath('data.1.latitude', '23.8100000')
+        ->assertJsonPath('data.1.longitude', '90.4100000')
+        ->assertJsonPath('data.1.map_url', 'https://maps.google.com/?q=23.81,90.41')
         ->assertJsonStructure([
             'data' => [
-                ['id', 'name', 'city', 'area'],
+                [
+                    'id',
+                    'name',
+                    'address',
+                    'city',
+                    'area',
+                    'latitude',
+                    'longitude',
+                    'map_url',
+                    'image_url',
+                ],
             ],
         ]);
 });
@@ -257,7 +299,17 @@ test('public can fetch published property details by slug', function () {
                 'id',
                 'title',
                 'slug',
-                'location' => ['id', 'name', 'city', 'area', 'address', 'map_url'],
+                'location' => [
+                    'id',
+                    'name',
+                    'city',
+                    'area',
+                    'address',
+                    'latitude',
+                    'longitude',
+                    'map_url',
+                    'image_url',
+                ],
                 'property_type' => ['id', 'name', 'slug'],
                 'features',
                 'cover_image',

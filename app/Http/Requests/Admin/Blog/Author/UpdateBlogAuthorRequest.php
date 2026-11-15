@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests\Admin\Blog\Author;
 
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBlogAuthorRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('blog_author_update') ?? false;
     }
 
     /**
@@ -21,6 +20,8 @@ class UpdateBlogAuthorRequest extends FormRequest
             'bio' => ['nullable', 'string'],
             'designation' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'boolean'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_avatar' => ['sometimes', 'boolean'],
             'social_links' => ['nullable', 'array'],
             'social_links.*' => ['nullable', 'url', 'max:2048'],
         ];

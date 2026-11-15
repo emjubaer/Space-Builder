@@ -44,6 +44,11 @@ docs: |-
   Returns a paginated list of published properties (newest `id` first).
   Optional filters are combined with AND.
 
+  Find Us map: call this endpoint with `property_type_id`, `location_id`, and/or
+  `status`, then plot markers from each item's `location.latitude` /
+  `location.longitude`. Load dropdown options from `/api/property-types` and
+  `/api/locations` (status values are a fixed enum below).
+
   Example: `/api/properties?property_type_id=1&status=ongoing&location_id=2&limit=6`
 
   ## Query parameters
@@ -94,7 +99,11 @@ docs: |-
           "name": "Gulshan",
           "address": "Road 12, Gulshan-2",
           "city": "Dhaka",
-          "area": "Gulshan-2"
+          "area": "Gulshan-2",
+          "latitude": "23.7808870",
+          "longitude": "90.4166640",
+          "map_url": "https://maps.google.com/?q=23.78,90.41",
+          "image_url": null
         },
         "property_type": {
           "id": 1,

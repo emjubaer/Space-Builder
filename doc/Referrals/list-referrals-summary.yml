@@ -1,0 +1,65 @@
+info:
+  name: Referral Summary
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: '{{baseUrl}}/api/referrals/summary'
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: Bearer {{token}}
+  auth: none
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Referral Summary
+
+  Lean user profile plus referral totals for the authenticated member dashboard header/cards.
+
+  Stats mapping:
+  - `total_successful` = status `verified`
+  - `total_in_progress` = status `unverified`
+  - `total_rewards_earned` = sum of earned/paid `referral_rewards`
+
+  User fields returned: `id`, `name`, `email`, `mobile`, `referral_link` only.
+
+  ## Response example — `200 OK`
+
+  ```json
+  {
+    "success": true,
+    "status": 200,
+    "message": "Referral summary retrieved successfully.",
+    "data": {
+      "user": {
+        "id": 1,
+        "name": "Rifat Ahamed",
+        "email": "rifat@example.com",
+        "mobile": "01400715037",
+        "referral_link": "{{baseUrl}}/ref/ngm84gf1"
+      },
+      "stats": {
+        "total_referrals": 12,
+        "total_successful": 3,
+        "total_in_progress": 8,
+        "total_rewards_earned": 1124
+      }
+    }
+  }
+  ```
+
+  ## Response example — `401 Unauthorized`
+
+  ```json
+  {
+    "message": "Unauthenticated."
+  }
+  ```

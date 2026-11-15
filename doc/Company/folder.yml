@@ -11,3 +11,5 @@ docs: |-
   | Method | Path | Auth |
   |--------|------|------|
   | GET | `/api/company-profile` | Public |
+
+  All responses use the ApiResponse envelope: `success`, `status`, `message`, `data`.

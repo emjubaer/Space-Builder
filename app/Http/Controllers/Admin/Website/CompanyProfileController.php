@@ -27,7 +27,7 @@ class CompanyProfileController extends Controller
     {
         $profile = $this->companyProfiles->current();
 
-        return Inertia::render('website/general/index', [
+        return Inertia::render('settings/website-general', [
             'profile' => (new CompanyProfileResource($profile))->resolve(),
             'platforms' => SocialPlatform::options(),
         ]);

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('referred_phone')->nullable();
             $table->text('note')->nullable();
             $table->boolean('permission_confirmed')->default(false);
-            $table->string('status')->default('pending')->index();
+            $table->string('status')->default('unverified')->index();
             $table->timestamp('converted_at')->nullable();
             $table->timestamps();
         });

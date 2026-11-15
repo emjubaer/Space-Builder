@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin\Blog;
 
-use App\Enums\UserRole;
 use App\Models\BlogAuthor;
 use App\Models\BlogCategory;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,7 +11,7 @@ class UpdateBlogRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('blog_update') ?? false;
     }
 
     /**

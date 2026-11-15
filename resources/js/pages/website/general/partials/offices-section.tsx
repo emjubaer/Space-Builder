@@ -86,7 +86,7 @@ export default function OfficesSection({ offices, onChanged }: Props) {
 
     const createMutation = useMutation({
         mutationFn: () =>
-            webApi.post(route('admin.website.general.offices.store'), {
+            webApi.post(route('settings.website-general.offices.store'), {
                 name,
                 address,
                 phone,
@@ -121,7 +121,7 @@ export default function OfficesSection({ offices, onChanged }: Props) {
     const updateMutation = useMutation({
         mutationFn: () =>
             webApi.put(
-                route('admin.website.general.offices.update', editOffice!.id),
+                route('settings.website-general.offices.update', editOffice!.id),
                 {
                     name,
                     address,
@@ -159,7 +159,7 @@ export default function OfficesSection({ offices, onChanged }: Props) {
         mutationFn: () =>
             webApi.delete(
                 route(
-                    'admin.website.general.offices.destroy',
+                    'settings.website-general.offices.destroy',
                     deleteOffice!.id,
                 ),
             ),

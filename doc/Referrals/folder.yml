@@ -1,0 +1,25 @@
+info:
+  name: Referrals
+  type: folder
+  seq: 8
+
+docs: |-
+  # Referrals
+
+  Member referral list/summary/add endpoints require a Sanctum Bearer token.
+  Link capture is public and throttled.
+
+  | Method | Path | Auth |
+  |--------|------|------|
+  | GET | `/api/referrals` | Bearer token |
+  | GET | `/api/referrals/summary` | Bearer token |
+  | POST | `/api/referrals` | Bearer token (`source=manual`) |
+  | POST | `/api/referrals/{referralCode}` | Public (`source=link`) |
+
+  New referrals are created with status `unverified`. Admins verify them from the admin dashboard.
+
+  Create requests require `permission_confirmed` to be accepted. The same `referred_phone` cannot be submitted again globally within 2 months.
+
+  Share links for the Next.js form are `{baseUrl}/ref/{referral_code}`. The form posts to `POST /api/referrals/{referralCode}`.
+
+  All responses use the ApiResponse envelope: `success`, `status`, `message`, `data`.

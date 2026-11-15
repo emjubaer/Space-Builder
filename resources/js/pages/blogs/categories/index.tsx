@@ -6,6 +6,7 @@ import Heading from '@/components/heading';
 import Pagination from '@/components/pagination';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import CategoriesTable, {
@@ -14,6 +15,7 @@ import CategoriesTable, {
 import CreateCategory from '@/pages/blogs/categories/partials/create-category';
 
 export default function BlogCategoriesIndex() {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -74,7 +76,9 @@ export default function BlogCategoriesIndex() {
                         title="Categories"
                         description="Manage blog categories"
                     />
-                    <CreateCategory onSuccess={refresh} />
+                    {can('blog_category_create') && (
+                        <CreateCategory onSuccess={refresh} />
+                    )}
                 </div>
 
                 <div className="relative max-w-sm">

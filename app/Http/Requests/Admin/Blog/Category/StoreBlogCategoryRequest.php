@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests\Admin\Blog\Category;
 
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBlogCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('blog_category_create') ?? false;
     }
 
     /**

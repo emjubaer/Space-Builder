@@ -2,12 +2,14 @@
 
 use App\Enums\UserRole;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->seed(RoleSeeder::class);
+    $this->seed(PermissionSeeder::class);
 });
 
 function blogMediaAdminUser(): User

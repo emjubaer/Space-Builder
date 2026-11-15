@@ -15,15 +15,30 @@ class AuthService
     /**
      * Register a new user and issue an API token.
      *
-     * @param  array{email: string, mobile: string, password: string}  $data
+     * @param  array{name: string, email: string, mobile: string, password: string, referral_code?: string|null}  $data
      * @return array{user: User, token: string}
      */
     public function register(array $data): array
     {
+        $referredBy = null;
+
+        if (! empty($data['referral_code'])) {
+            $referrer = User::query()
+                ->where('referral_code', $data['referral_code'])
+                ->first();
+
+            if ($referrer !== null) {
+                $referredBy = $referrer->id;
+            }
+        }
+
         $user = User::create([
+            'name' => $data['name'],
             'email' => $data['email'],
             'mobile' => $data['mobile'],
             'password' => $data['password'],
+            'referral_code' => $this->generateUniqueReferralCode(),
+            'referred_by' => $referredBy,
         ]);
 
         $token = $user->createToken('api')->plainTextToken;
@@ -109,5 +124,14 @@ class AuthService
     public function logout(User $user): void
     {
         $user->currentAccessToken()?->delete();
+    }
+
+    private function generateUniqueReferralCode(): string
+    {
+        do {
+            $code = strtolower(Str::random(8));
+        } while (User::query()->where('referral_code', $code)->exists());
+
+        return $code;
     }
 }

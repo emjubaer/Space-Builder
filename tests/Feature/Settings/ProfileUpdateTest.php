@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -48,6 +50,79 @@ test('email verification status is unchanged when the email address is unchanged
         ->assertRedirect(route('profile.edit'));
 
     expect($user->refresh()->email_verified_at)->not->toBeNull();
+});
+
+test('profile avatar can be uploaded', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create();
+    $avatar = UploadedFile::fake()->image('avatar.jpg');
+
+    $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $avatar,
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $user->refresh();
+
+    expect($user->avatar)->not->toBeNull();
+    Storage::disk('public')->assertExists($user->avatar);
+});
+
+test('profile avatar can be replaced', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create();
+    $oldAvatar = UploadedFile::fake()->image('old-avatar.jpg')->store('avatars', 'public');
+    $user->update(['avatar' => $oldAvatar]);
+
+    $newAvatar = UploadedFile::fake()->image('new-avatar.jpg');
+
+    $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $newAvatar,
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $user->refresh();
+
+    expect($user->avatar)->not->toBeNull()
+        ->and($user->avatar)->not->toBe($oldAvatar);
+
+    Storage::disk('public')->assertMissing($oldAvatar);
+    Storage::disk('public')->assertExists($user->avatar);
+});
+
+test('profile avatar can be removed', function () {
+    Storage::fake('public');
+
+    $user = User::factory()->create();
+    $avatar = UploadedFile::fake()->image('avatar.jpg')->store('avatars', 'public');
+    $user->update(['avatar' => $avatar]);
+
+    $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'remove_avatar' => true,
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $user->refresh();
+
+    expect($user->avatar)->toBeNull();
+    Storage::disk('public')->assertMissing($avatar);
 });
 
 test('user can delete their account', function () {

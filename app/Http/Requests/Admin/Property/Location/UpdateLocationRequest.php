@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests\Admin\Property\Location;
 
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateLocationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('location_update') ?? false;
     }
 
     /**

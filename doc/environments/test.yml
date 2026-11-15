@@ -6,12 +6,18 @@ variables:
   - secret: true
     name: token
     description: Sanctum Bearer token (auto-filled by Login / Register)
+  - name: name
+    value: Rifat Ahamed
+    description: Test user full name
   - name: email
-    value: dapi2@example.com
+    value: emjubaer420@gmail.com
     description: Test user email
   - name: mobile
-    value: "01700000054"
+    value: "01686529796"
     description: Test user mobile number
   - secret: true
     name: password
     description: Test user password
+  - name: referralCode
+    value: ngm84gf1
+    description: Sample referral code for public link capture

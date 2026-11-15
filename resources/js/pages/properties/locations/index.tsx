@@ -6,6 +6,7 @@ import Heading from '@/components/heading';
 import Pagination from '@/components/pagination';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import CreateLocation from '@/pages/properties/locations/partials/create-location';
@@ -14,6 +15,7 @@ import LocationsTable, {
 } from '@/pages/properties/locations/partials/locations-table';
 
 export default function PropertyLocationsIndex() {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -75,7 +77,9 @@ export default function PropertyLocationsIndex() {
                         title="Locations"
                         description="Locations used by properties"
                     />
-                    <CreateLocation onSuccess={refresh} />
+                    {can('location_create') && (
+                        <CreateLocation onSuccess={refresh} />
+                    )}
                 </div>
                 <div className="relative max-w-sm">
                     <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />

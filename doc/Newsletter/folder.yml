@@ -1,0 +1,13 @@
+info:
+  name: Newsletter
+  type: folder
+  seq: 6
+
+docs: |-
+  # Newsletter
+
+  Public newsletter subscription endpoints.
+
+  | Method | Path | Auth |
+  |--------|------|------|
+  | POST | `/api/newsletter/subscribe` | Public (throttled) |

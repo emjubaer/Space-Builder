@@ -15,9 +15,11 @@ http:
     type: json
     data: |-
       {
+        "name": "{{name}}",
         "email": "{{email}}",
         "mobile": "{{mobile}}",
-        "password": "{{password}}"
+        "password": "{{password}}",
+        "referral_code": null
       }
   auth: none
 
@@ -25,8 +27,8 @@ runtime:
   scripts:
     - type: after-response
       code: |-
-        if (res.status === 201 && res.body.token) {
-          bru.setEnvVar('token', res.body.token);
+        if (res.status === 201 && res.body.data?.token) {
+          bru.setEnvVar('token', res.body.data.token);
         }
 
 settings:
@@ -38,33 +40,43 @@ settings:
 docs: |-
   # Register
 
-  Create a new user and return a Sanctum API token.
+  Create a new user, auto-generate a referral code/link, and return a Sanctum API token.
 
   ## Request body
 
   | Field | Type | Required | Notes |
   |-------|------|----------|-------|
+  | `name` | string | yes | Max 255 chars |
   | `email` | string | yes | Unique email |
   | `mobile` | string | yes | Unique mobile, max 20 chars |
   | `password` | string | yes | No confirmation field |
+  | `referral_code` | string | no | Inviter's code from `/ref/{code}`; sets `referred_by` when valid |
 
   ## Response example — `201 Created`
 
   ```json
   {
+    "success": true,
+    "status": 201,
     "message": "Registered successfully.",
-    "token": "1|abcdefghijklmnopqrstuvwxyz",
-    "user": {
-      "id": 1,
-      "name": null,
-      "email": "api@example.com",
-      "mobile": "01700000000",
-      "email_verified_at": null,
-      "created_at": "2026-11-11T03:00:00.000000Z",
-      "updated_at": "2026-11-11T03:00:00.000000Z"
+    "data": {
+      "token": "1|abcdefghijklmnopqrstuvwxyz",
+      "user": {
+        "id": 1,
+        "name": "Rifat Ahamed",
+        "email": "api@example.com",
+        "mobile": "01700000000",
+        "referral_code": "ngm84gf1",
+        "referral_link": "{{baseUrl}}/ref/ngm84gf1",
+        "email_verified_at": null,
+        "created_at": "2026-11-11T03:00:00.000000Z",
+        "updated_at": "2026-11-11T03:00:00.000000Z"
+      }
     }
   }
   ```
+
+  `referral_link` is always `{APP_URL}/ref/{referral_code}`.
 
   ## Response example — `422 Unprocessable Entity`
 

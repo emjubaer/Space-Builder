@@ -8,10 +8,12 @@ use App\Models\Location;
 use App\Models\Property;
 use App\Models\PropertyType;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 
 beforeEach(function () {
     $this->seed(RoleSeeder::class);
+    $this->seed(PermissionSeeder::class);
 });
 
 function constructionAdminUser(): User

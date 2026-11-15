@@ -12,16 +12,17 @@ export default function ThemeToggle() {
     return (
         <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="icon"
+            className="text-foreground"
             onClick={onToggle}
             aria-label="Toggle theme"
             title="Toggle theme"
         >
             {resolvedAppearance === 'dark' ? (
-                <Sun className="size-5" />
+                <Sun className="size-4" />
             ) : (
-                <Moon className="size-5" />
+                <Moon className="size-4" />
             )}
         </Button>
     );

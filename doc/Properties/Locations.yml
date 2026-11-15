@@ -20,7 +20,12 @@ settings:
 docs: |-
   # Locations
 
-  Returns all locations for the Explore "Location" dropdown (ordered by name).
+  Returns all locations ordered by name, including coordinates and image URL
+  for map centering and the "All Location" dropdown.
+
+  **No query parameters.** Project Type / Project Status / location filters for
+  Find Us map markers belong on `GET /api/properties`
+  (`property_type_id`, `status`, `location_id`).
 
   ## Response example — `200 OK`
 
@@ -33,14 +38,24 @@ docs: |-
       {
         "id": 1,
         "name": "Gulshan",
+        "address": "Road 12, Gulshan-2",
         "city": "Dhaka",
-        "area": "Gulshan-2"
+        "area": "Gulshan-2",
+        "latitude": "23.7808870",
+        "longitude": "90.4166640",
+        "map_url": "https://maps.google.com/?q=23.78,90.41",
+        "image_url": "http://localhost/storage/locations/gulshan.jpg"
       },
       {
         "id": 2,
         "name": "Dhanmondi",
+        "address": "Road 27",
         "city": "Dhaka",
-        "area": "Road 27"
+        "area": "Road 27",
+        "latitude": "23.7461000",
+        "longitude": "90.3742000",
+        "map_url": null,
+        "image_url": null
       }
     ]
   }

@@ -78,7 +78,7 @@ class PropertyService
         return Property::query()
             ->published()
             ->with([
-                'location:id,name,city,area,address',
+                'location:id,name,address,city,area,latitude,longitude,image,map_url',
                 'propertyType:id,name,slug',
                 'coverImages:id,property_id,image_path,image_type,alt_text,caption,sort_order',
             ]);

@@ -90,7 +90,13 @@ class BlogAuthorController extends Controller
 
     public function update(UpdateBlogAuthorRequest $request, BlogAuthor $blogAuthor): JsonResponse
     {
-        $this->authors->update($blogAuthor, $request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('avatar')) {
+            $data['avatar'] = $request->file('avatar');
+        }
+
+        $this->authors->update($blogAuthor, $data);
 
         return response()->json([
             'message' => __('Author updated successfully.'),

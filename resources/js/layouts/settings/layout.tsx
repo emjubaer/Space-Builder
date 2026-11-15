@@ -3,6 +3,7 @@ import type { PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useCan } from '@/hooks/use-can';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { route } from '@/lib/route';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,10 @@ import type { NavItem } from '@/types';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
+    const can = useCan();
+    const isWebsiteGeneral = isCurrentOrParentUrl(
+        route('settings.website-general.index'),
+    );
 
     const sidebarNavItems: NavItem[] = [
         {
@@ -27,6 +32,15 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             href: route('appearance.edit'),
             icon: null,
         },
+        ...(can('company_profile_view')
+            ? [
+                  {
+                      title: 'General',
+                      href: route('settings.website-general.index'),
+                      icon: null,
+                  } satisfies NavItem,
+              ]
+            : []),
     ];
 
     return (
@@ -65,8 +79,18 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                 <Separator className="my-6 lg:hidden" />
 
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
+                <div
+                    className={cn(
+                        'flex-1',
+                        isWebsiteGeneral ? 'md:max-w-4xl' : 'md:max-w-2xl',
+                    )}
+                >
+                    <section
+                        className={cn(
+                            'space-y-12',
+                            isWebsiteGeneral ? 'max-w-4xl' : 'max-w-xl',
+                        )}
+                    >
                         {children}
                     </section>
                 </div>

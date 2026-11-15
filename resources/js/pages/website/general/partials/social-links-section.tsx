@@ -86,7 +86,7 @@ export default function SocialLinksSection({
 
     const createMutation = useMutation({
         mutationFn: () =>
-            webApi.post(route('admin.website.general.social-links.store'), {
+            webApi.post(route('settings.website-general.social-links.store'), {
                 platform,
                 url,
                 sort_order: Number(sortOrder) || 0,
@@ -118,7 +118,7 @@ export default function SocialLinksSection({
     const updateMutation = useMutation({
         mutationFn: () =>
             webApi.put(
-                route('admin.website.general.social-links.update', editLink!.id),
+                route('settings.website-general.social-links.update', editLink!.id),
                 {
                     platform,
                     url,
@@ -153,7 +153,7 @@ export default function SocialLinksSection({
         mutationFn: () =>
             webApi.delete(
                 route(
-                    'admin.website.general.social-links.destroy',
+                    'settings.website-general.social-links.destroy',
                     deleteLink!.id,
                 ),
             ),

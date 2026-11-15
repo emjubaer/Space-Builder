@@ -1,0 +1,98 @@
+info:
+  name: Add Referral
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: '{{baseUrl}}/api/referrals'
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: Bearer {{token}}
+  body:
+    type: json
+    data: |-
+      {
+        "referred_name": "Rifat Ahamed",
+        "referred_phone": "+8801400715037",
+        "note": "Lorem Ipsum",
+        "permission_confirmed": true
+      }
+  auth: none
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Add Referral
+
+  Submit a referral lead for the authenticated user. Status defaults to `unverified`. Source is set to `manual`.
+
+  The same `referred_phone` cannot be submitted again globally within 2 months (any referrer).
+
+  ## Request body
+
+  | Field | Type | Required | Notes |
+  |-------|------|----------|-------|
+  | `referred_name` | string | yes | Max 255 chars |
+  | `referred_phone` | string | yes | Max 20 chars; unique globally for 2 months |
+  | `note` | string | no | Optional note |
+  | `permission_confirmed` | boolean | yes | Must be `true` / accepted |
+
+  ## Response example — `201 Created`
+
+  ```json
+  {
+    "success": true,
+    "status": 201,
+    "message": "Referral added successfully.",
+    "data": {
+      "id": 1,
+      "referred_name": "Rifat Ahamed",
+      "referred_phone": "+8801400715037",
+      "submitted_at": "2026-11-12T00:00:00.000000Z",
+      "status": "unverified",
+      "source": "manual",
+      "note": "Lorem Ipsum"
+    }
+  }
+  ```
+
+  ## Response example — `401 Unauthorized`
+
+  ```json
+  {
+    "message": "Unauthenticated."
+  }
+  ```
+
+  ## Response example — `422 Unprocessable Entity` (validation)
+
+  ```json
+  {
+    "message": "The referred name field is required. (and 2 more errors)",
+    "errors": {
+      "referred_name": ["The referred name field is required."],
+      "referred_phone": ["The referred phone field is required."],
+      "permission_confirmed": ["The permission confirmed field must be accepted."]
+    }
+  }
+  ```
+
+  ## Response example — `422 Unprocessable Entity` (phone cooldown)
+
+  ```json
+  {
+    "message": "This phone number was already referred within the last 2 months.",
+    "errors": {
+      "referred_phone": ["This phone number was already referred within the last 2 months."]
+    }
+  }
+  ```

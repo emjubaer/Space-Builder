@@ -1,6 +1,8 @@
-import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
+import ImageUpload from '@/components/image-upload';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +22,17 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage<PageProps>().props;
+    const [avatar, setAvatar] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(
+        auth.user?.avatar ?? null,
+    );
+    const [removeAvatar, setRemoveAvatar] = useState(false);
+
+    useEffect(() => {
+        setAvatar(null);
+        setRemoveAvatar(false);
+        setAvatarPreview(auth.user?.avatar ?? null);
+    }, [auth.user?.avatar]);
 
     return (
         <>
@@ -31,7 +44,7 @@ export default function Profile({
                 <Heading
                     variant="small"
                     title="Profile"
-                    description="Update your name and email address"
+                    description="Update your photo, name, and email address"
                 />
 
                 <Form
@@ -40,10 +53,39 @@ export default function Profile({
                     options={{
                         preserveScroll: true,
                     }}
+                    transform={(data) => ({
+                        ...data,
+                        ...(avatar ? { avatar } : {}),
+                        remove_avatar: removeAvatar,
+                    })}
                     className="space-y-6"
                 >
                     {({ processing, errors }) => (
                         <>
+                            <div className="grid gap-2">
+                                <Label>Profile photo</Label>
+                                <ImageUpload
+                                    value={removeAvatar ? null : avatarPreview}
+                                    onChange={(file) => {
+                                        setAvatar(file);
+                                        if (file) {
+                                            setRemoveAvatar(false);
+                                            setAvatarPreview(
+                                                URL.createObjectURL(file),
+                                            );
+                                        } else {
+                                            setRemoveAvatar(true);
+                                            setAvatarPreview(null);
+                                        }
+                                    }}
+                                    maxSizeMb={2}
+                                />
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.avatar}
+                                />
+                            </div>
+
                             <div className="grid gap-2">
                                 <Label htmlFor="name" required>
                                     Name

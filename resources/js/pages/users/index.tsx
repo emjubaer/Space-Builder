@@ -6,6 +6,7 @@ import Heading from '@/components/heading';
 import Pagination from '@/components/pagination';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import AddUser from '@/pages/users/partials/add-user';
@@ -31,6 +32,7 @@ type UserRow = {
 };
 
 export default function UsersIndex({ roles }: Props) {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -107,7 +109,9 @@ export default function UsersIndex({ roles }: Props) {
                         title="Users"
                         description="Manage admin, author, and staff accounts"
                     />
-                    <AddUser roles={roles} onSuccess={refresh} />
+                    {can('user_create') && (
+                        <AddUser roles={roles} onSuccess={refresh} />
+                    )}
                 </div>
 
                 <div className="relative max-w-sm">

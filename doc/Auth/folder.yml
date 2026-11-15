@@ -15,3 +15,8 @@ docs: |-
   | POST | `/api/forgot-password` | Public |
   | POST | `/api/reset-password` | Public |
   | POST | `/api/logout` | Bearer token |
+
+  Register requires `name`, `email`, `mobile`, and `password`, and returns `user.referral_code` / `user.referral_link` (`{baseUrl}/ref/{code}`).
+  Register also accepts an optional `referral_code` to attribute the new account to an inviter.
+
+  All success responses use the ApiResponse envelope: `success`, `status`, `message`, `data`.

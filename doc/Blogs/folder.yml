@@ -18,6 +18,9 @@ docs: |-
   Query param `limit` controls page size on list/search (default 15, max 100)
   and result count on related (default 4, max 20).
 
+  All responses use the ApiResponse envelope: `success`, `status`, `message`, `data`
+  (and `meta` for paginated list).
+
   ## Images
 
   - `featured_image_url` — single featured image on the blog row (`blogs.featured_image`)

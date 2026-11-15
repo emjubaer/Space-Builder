@@ -16,8 +16,10 @@ class CompanyProfileController extends Controller
             'offices' => fn ($query) => $query->orderByDesc('is_head_office')->orderBy('name'),
         ]);
 
-        return response()->json([
-            'data' => (new CompanyProfileResource($profile))->resolve(),
-        ]);
+        return $this->success(
+            'Company profile retrieved.',
+            200,
+            (new CompanyProfileResource($profile))->resolve(),
+        );
     }
 }

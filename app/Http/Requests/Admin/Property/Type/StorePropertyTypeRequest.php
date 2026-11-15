@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests\Admin\Property\Type;
 
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePropertyTypeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('property_type_create') ?? false;
     }
 
     /**

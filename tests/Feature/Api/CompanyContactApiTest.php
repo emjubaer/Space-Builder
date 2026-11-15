@@ -46,6 +46,9 @@ test('public can fetch company profile with active social links offices and coor
 
     $this->getJson(route('api.company-profile.show'))
         ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('status', 200)
+        ->assertJsonPath('message', 'Company profile retrieved.')
         ->assertJsonPath('data.company_name', 'Space Builder Public')
         ->assertJsonPath('data.email', 'public@space.test')
         ->assertJsonPath('data.website_url', 'https://spacebuilder.test')
@@ -70,6 +73,9 @@ test('public can submit a contact message', function () {
     ]);
 
     $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('status', 201)
+        ->assertJsonPath('message', 'Your message has been sent successfully.')
         ->assertJsonPath('data.first_name', 'Jane')
         ->assertJsonPath('data.subject', 'Project inquiry')
         ->assertJsonPath('data.status', ContactMessageStatus::New->value);

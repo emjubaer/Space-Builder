@@ -28,6 +28,7 @@ class DashboardController extends Controller
             'analytics' => $this->analytics(),
             'recentProperties' => $this->recentProperties(),
             'recentContacts' => $this->recentContacts(),
+            'recentSubscribers' => $this->recentSubscribers(),
             'constructionHighlights' => $this->constructionHighlights(),
         ]);
     }
@@ -58,9 +59,12 @@ class DashboardController extends Controller
                 ->where('status', ContactMessageStatus::New)
                 ->count(),
             'subscribers' => NewsletterSubscriber::query()->count(),
+            'subscribers_active' => NewsletterSubscriber::query()
+                ->where('is_active', true)
+                ->count(),
             'referrals' => Referral::query()->count(),
             'referrals_pending' => Referral::query()
-                ->where('status', ReferralStatus::Pending)
+                ->where('status', ReferralStatus::Unverified)
                 ->count(),
             'blogs' => Blog::query()->count(),
             'blogs_published' => Blog::query()
@@ -142,6 +146,25 @@ class DashboardController extends Controller
     /**
      * @return list<array<string, mixed>>
      */
+    private function recentSubscribers(): array
+    {
+        return NewsletterSubscriber::query()
+            ->latest('subscribed_at')
+            ->latest('id')
+            ->limit(6)
+            ->get(['id', 'email', 'is_active', 'subscribed_at'])
+            ->map(fn (NewsletterSubscriber $subscriber): array => [
+                'id' => $subscriber->id,
+                'email' => $subscriber->email,
+                'is_active' => $subscriber->is_active,
+                'subscribed_at' => $subscriber->subscribed_at?->toIso8601String(),
+            ])
+            ->all();
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
     private function constructionHighlights(): array
     {
         return ConstructionTask::query()
@@ -181,14 +204,25 @@ class DashboardController extends Controller
      */
     private function mergeDailyCounts(array &$series, string $model, CarbonInterface $start, string $key): void
     {
-        $rows = $model::query()
-            ->select(DB::raw('DATE(created_at) as day'), DB::raw('count(*) as total'))
+        $counts = [];
+
+        $model::query()
             ->where('created_at', '>=', $start)
-            ->groupBy('day')
-            ->pluck('total', 'day');
+            ->select(['id', 'created_at'])
+            ->orderBy('id')
+            ->cursor()
+            ->each(function (object $record) use (&$counts): void {
+                $day = $record->created_at?->toDateString();
+
+                if ($day === null) {
+                    return;
+                }
+
+                $counts[$day] = ($counts[$day] ?? 0) + 1;
+            });
 
         foreach ($series as $day => &$point) {
-            $point[$key] = (int) ($rows[$day] ?? 0);
+            $point[$key] = (int) ($counts[$day] ?? 0);
         }
         unset($point);
     }

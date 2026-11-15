@@ -58,6 +58,7 @@ type DashboardStats = {
     contacts: number;
     contacts_new: number;
     subscribers: number;
+    subscribers_active: number;
     referrals: number;
     referrals_pending: number;
     blogs: number;
@@ -102,6 +103,13 @@ type RecentContact = {
     created_at: string | null;
 };
 
+type RecentSubscriber = {
+    id: number;
+    email: string;
+    is_active: boolean;
+    subscribed_at: string | null;
+};
+
 type Props = {
     stats: DashboardStats;
     analytics: {
@@ -110,6 +118,7 @@ type Props = {
     };
     recentProperties: RecentProperty[];
     recentContacts: RecentContact[];
+    recentSubscribers: RecentSubscriber[];
     constructionHighlights: ConstructionHighlight[];
 };
 
@@ -130,14 +139,20 @@ const percent = (value: number) =>
         Number(value || 0),
     )}%`;
 
+const parseLocalDate = (value: string) => {
+    const [year, month, day] = value.split('-').map(Number);
+
+    return new Date(year, (month || 1) - 1, day || 1);
+};
+
 const formatShortDate = (value: string) =>
-    new Date(value).toLocaleDateString(undefined, {
+    parseLocalDate(value).toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
     });
 
 const formatLongDate = (value: string) =>
-    new Date(value).toLocaleDateString(undefined, {
+    parseLocalDate(value).toLocaleDateString(undefined, {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
@@ -163,34 +178,33 @@ function KpiCard({
     tone?: 'primary' | 'chart2' | 'chart3' | 'chart5';
 }) {
     const tones = {
-        primary: 'from-primary/15 to-transparent text-primary',
-        chart2: 'from-chart-2/15 to-transparent text-chart-2',
-        chart3: 'from-chart-3/15 to-transparent text-chart-3',
-        chart5: 'from-chart-5/15 to-transparent text-chart-5',
+        primary: 'bg-primary/15 text-primary',
+        chart2: 'bg-chart-2/15 text-chart-2',
+        chart3: 'bg-chart-3/15 text-chart-3',
+        chart5: 'bg-chart-5/15 text-chart-5',
     };
 
     return (
-        <Card className="overflow-hidden border-border/70 shadow-none">
-            <CardContent className="relative p-5">
-                <div
-                    className={`pointer-events-none absolute inset-0 bg-gradient-to-br opacity-80 ${tones[tone]}`}
-                />
-                <div className="relative flex items-start justify-between gap-3">
-                    <div>
-                        <p className="text-xs font-medium text-muted-foreground">
+        <Card
+            className={`overflow-hidden border-border/70 shadow-none ${tones[tone]}`}
+        >
+            <CardContent className="p-3.5">
+                <div className="flex items-start justify-between gap-2.5">
+                    <div className="min-w-0">
+                        <p className="text-[11px] font-medium text-muted-foreground">
                             {title}
                         </p>
-                        <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">
+                        <p className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
                             {value}
                         </p>
                         {hint ? (
-                            <p className="mt-1.5 text-xs text-muted-foreground">
+                            <p className="mt-1 truncate text-[11px] text-muted-foreground">
                                 {hint}
                             </p>
                         ) : null}
                     </div>
-                    <div className="rounded-lg border bg-background/80 p-2 shadow-sm">
-                        <Icon className="size-4" />
+                    <div className="rounded-md border border-current/15 bg-background/70 p-1.5 shadow-sm">
+                        <Icon className="size-3.5" />
                     </div>
                 </div>
             </CardContent>
@@ -202,13 +216,15 @@ function StatPill({
     title,
     value,
     icon: Icon,
+    href,
 }: {
     title: string;
     value: string;
     icon: ComponentType<{ className?: string }>;
+    href?: string;
 }) {
-    return (
-        <div className="flex items-center gap-3 rounded-xl border bg-card px-3.5 py-3">
+    const content = (
+        <div className="flex items-center gap-3 rounded-xl border bg-card px-3.5 py-3 transition-colors hover:bg-muted/40">
             <div className="rounded-md bg-muted p-2 text-muted-foreground">
                 <Icon className="size-3.5" />
             </div>
@@ -220,6 +236,16 @@ function StatPill({
             </div>
         </div>
     );
+
+    if (!href) {
+        return content;
+    }
+
+    return (
+        <Link href={href} className="block">
+            {content}
+        </Link>
+    );
 }
 
 export default function Dashboard({
@@ -227,6 +253,7 @@ export default function Dashboard({
     analytics,
     recentProperties,
     recentContacts,
+    recentSubscribers,
     constructionHighlights,
 }: Props) {
     const isMobile = useIsMobile();
@@ -256,23 +283,26 @@ export default function Dashboard({
         {
             title: 'Total Projects',
             value: number(stats.properties),
-            hint: `${number(stats.properties_featured)} featured`,
+            hint: `${number(stats.properties_featured)} featured · ${number(stats.properties_published)} published`,
             icon: Building2,
             tone: 'primary' as const,
-        },
-        {
-            title: 'Published Listings',
-            value: number(stats.properties_published),
-            hint: `${number(stats.properties_ongoing)} ongoing`,
-            icon: CheckCircle2,
-            tone: 'chart2' as const,
+            href: route('admin.properties.index'),
         },
         {
             title: 'New Inquiries',
             value: number(stats.contacts_new),
             hint: `${number(stats.contacts)} total messages`,
             icon: Mail,
+            tone: 'chart2' as const,
+            href: route('admin.website.contacts.index'),
+        },
+        {
+            title: 'Newsletter',
+            value: number(stats.subscribers_active),
+            hint: `${number(stats.subscribers)} total subscribers`,
+            icon: UserPlus,
             tone: 'chart3' as const,
+            href: route('admin.website.newsletter.index'),
         },
         {
             title: 'Avg Construction',
@@ -280,6 +310,7 @@ export default function Dashboard({
             hint: 'Across all project tasks',
             icon: Construction,
             tone: 'chart5' as const,
+            href: route('admin.properties.index'),
         },
     ];
 
@@ -288,41 +319,49 @@ export default function Dashboard({
             title: 'Projects',
             value: number(stats.properties),
             icon: Building2,
+            href: route('admin.properties.index'),
         },
         {
             title: 'Ongoing',
             value: number(stats.properties_ongoing),
             icon: TrendingUp,
+            href: route('admin.properties.index'),
         },
         {
             title: 'Completed',
             value: number(stats.properties_completed),
             icon: CheckCircle2,
+            href: route('admin.properties.index'),
         },
         {
             title: 'Inquiries',
             value: number(stats.contacts),
             icon: Mail,
+            href: route('admin.website.contacts.index'),
         },
         {
             title: 'Subscribers',
             value: number(stats.subscribers),
             icon: UserPlus,
+            href: route('admin.website.newsletter.index'),
         },
         {
             title: 'Referrals',
             value: number(stats.referrals_pending),
             icon: Share2,
+            href: route('admin.referrals.index'),
         },
         {
             title: 'Blogs',
             value: number(stats.blogs_published),
             icon: Newspaper,
+            href: route('admin.blogs.index'),
         },
         {
             title: 'Users',
             value: number(stats.users),
             icon: Users,
+            href: route('admin.users.index'),
         },
     ];
 
@@ -338,9 +377,8 @@ export default function Dashboard({
                             {firstName ? `, ${firstName}` : ''}
                         </h1>
                         <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                            Live overview of projects, construction progress,
-                            inquiries, and content for your real estate
-                            business.
+                            Live overview of projects, inquiries, newsletter
+                            growth, and construction progress.
                         </p>
                     </div>
                     <div className="flex flex-col items-end gap-1.5">
@@ -360,19 +398,15 @@ export default function Dashboard({
                 </div>
 
                 <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                    {kpiCards.map((card) =>
-                        card.title === 'New Inquiries' ? (
-                            <Link
-                                key={card.title}
-                                href={route('admin.website.contacts.index')}
-                                className="block transition-opacity hover:opacity-90"
-                            >
-                                <KpiCard {...card} />
-                            </Link>
-                        ) : (
-                            <KpiCard key={card.title} {...card} />
-                        ),
-                    )}
+                    {kpiCards.map((card) => (
+                        <Link
+                            key={card.title}
+                            href={card.href}
+                            className="block transition-opacity hover:opacity-90"
+                        >
+                            <KpiCard {...card} />
+                        </Link>
+                    ))}
                 </section>
 
                 <section className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-8">
@@ -468,7 +502,6 @@ export default function Dashboard({
                                                 fill={`url(#fill-${key})`}
                                                 stroke={`var(--color-${key})`}
                                                 strokeWidth={2}
-                                                stackId="a"
                                             />
                                         ))}
                                     </AreaChart>
@@ -495,15 +528,23 @@ export default function Dashboard({
                     </section>
                 )}
 
-                <section className="grid gap-4 lg:grid-cols-2">
+                <section className="grid gap-4 lg:grid-cols-3">
                     <Card className="border-border/70 shadow-none">
-                        <CardHeader>
-                            <CardTitle className="text-base">
-                                Recent projects
-                            </CardTitle>
-                            <CardDescription>
-                                Latest property developments in the pipeline.
-                            </CardDescription>
+                        <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+                            <div>
+                                <CardTitle className="text-base">
+                                    Recent projects
+                                </CardTitle>
+                                <CardDescription>
+                                    Latest property developments.
+                                </CardDescription>
+                            </div>
+                            <Link
+                                href={route('admin.properties.index')}
+                                className="text-xs font-medium text-primary hover:underline"
+                            >
+                                View all
+                            </Link>
                         </CardHeader>
                         <CardContent>
                             {recentProperties.length === 0 ? (
@@ -516,9 +557,6 @@ export default function Dashboard({
                                         <TableRow>
                                             <TableHead>Project</TableHead>
                                             <TableHead>Status</TableHead>
-                                            <TableHead className="hidden sm:table-cell">
-                                                Location
-                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -529,8 +567,12 @@ export default function Dashboard({
                                                         {property.title}
                                                     </div>
                                                     <div className="text-xs text-muted-foreground">
-                                                        {property.property_type
-                                                            ?.name ?? '—'}
+                                                        {property.location
+                                                            ?.name ??
+                                                            property
+                                                                .property_type
+                                                                ?.name ??
+                                                            '—'}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
@@ -539,10 +581,6 @@ export default function Dashboard({
                                                             property.status,
                                                         )}
                                                     </Badge>
-                                                </TableCell>
-                                                <TableCell className="hidden text-sm text-muted-foreground sm:table-cell">
-                                                    {property.location?.name ??
-                                                        '—'}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -559,7 +597,7 @@ export default function Dashboard({
                                     Recent inquiries
                                 </CardTitle>
                                 <CardDescription>
-                                    Latest messages from the contact form.
+                                    Latest contact form messages.
                                 </CardDescription>
                             </div>
                             <Link
@@ -579,7 +617,6 @@ export default function Dashboard({
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>From</TableHead>
-                                            <TableHead>Subject</TableHead>
                                             <TableHead>Status</TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -590,12 +627,10 @@ export default function Dashboard({
                                                     <div className="font-medium">
                                                         {contact.full_name}
                                                     </div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        {contact.email}
+                                                    <div className="max-w-[10rem] truncate text-xs text-muted-foreground">
+                                                        {contact.subject ||
+                                                            contact.email}
                                                     </div>
-                                                </TableCell>
-                                                <TableCell className="max-w-[10rem] truncate text-sm">
-                                                    {contact.subject || '—'}
                                                 </TableCell>
                                                 <TableCell>
                                                     <Badge variant="secondary">
@@ -606,6 +641,76 @@ export default function Dashboard({
                                                 </TableCell>
                                             </TableRow>
                                         ))}
+                                    </TableBody>
+                                </Table>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-border/70 shadow-none">
+                        <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+                            <div>
+                                <CardTitle className="text-base">
+                                    Recent subscribers
+                                </CardTitle>
+                                <CardDescription>
+                                    Latest newsletter sign-ups.
+                                </CardDescription>
+                            </div>
+                            <Link
+                                href={route(
+                                    'admin.website.newsletter.index',
+                                )}
+                                className="text-xs font-medium text-primary hover:underline"
+                            >
+                                View all
+                            </Link>
+                        </CardHeader>
+                        <CardContent>
+                            {recentSubscribers.length === 0 ? (
+                                <p className="py-8 text-center text-sm text-muted-foreground">
+                                    No subscribers yet.
+                                </p>
+                            ) : (
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Email</TableHead>
+                                            <TableHead>Status</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {recentSubscribers.map(
+                                            (subscriber) => (
+                                                <TableRow key={subscriber.id}>
+                                                    <TableCell>
+                                                        <div className="max-w-[12rem] truncate font-medium">
+                                                            {subscriber.email}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground">
+                                                            {subscriber.subscribed_at
+                                                                ? formatShortDate(
+                                                                      subscriber.subscribed_at,
+                                                                  )
+                                                                : '—'}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Badge
+                                                            variant={
+                                                                subscriber.is_active
+                                                                    ? 'default'
+                                                                    : 'secondary'
+                                                            }
+                                                        >
+                                                            {subscriber.is_active
+                                                                ? 'Active'
+                                                                : 'Inactive'}
+                                                        </Badge>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ),
+                                        )}
                                     </TableBody>
                                 </Table>
                             )}

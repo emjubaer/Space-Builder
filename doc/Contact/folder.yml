@@ -11,3 +11,5 @@ docs: |-
   | Method | Path | Auth |
   |--------|------|------|
   | POST | `/api/contact-messages` | Public (throttled) |
+
+  All responses use the ApiResponse envelope: `success`, `status`, `message`, `data`.

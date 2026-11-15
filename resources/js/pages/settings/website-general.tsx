@@ -1,9 +1,9 @@
 import { Head, router } from '@inertiajs/react';
 import { useMutation } from '@tanstack/react-query';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import Heading from '@/components/heading';
-import ImageField, { type ImagePreviewItem } from '@/components/image-field';
+import ImageUpload from '@/components/image-upload';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,25 +69,26 @@ export default function WebsiteGeneralIndex({ profile, platforms }: Props) {
             ? String(profile.longitude)
             : '',
     );
-    const [logo, setLogo] = useState<ImagePreviewItem | null>(
-        profile.logo_url
-            ? {
-                  url: profile.logo_url,
-                  name: profile.logo?.split('/').pop() || 'logo',
-              }
-            : null,
+    const [logoFile, setLogoFile] = useState<File | null>(null);
+    const [logoPreview, setLogoPreview] = useState<string | null>(
+        profile.logo_url,
     );
-    const [favicon, setFavicon] = useState<ImagePreviewItem | null>(
-        profile.favicon_url
-            ? {
-                  url: profile.favicon_url,
-                  name: profile.favicon?.split('/').pop() || 'favicon',
-              }
-            : null,
+    const [faviconFile, setFaviconFile] = useState<File | null>(null);
+    const [faviconPreview, setFaviconPreview] = useState<string | null>(
+        profile.favicon_url,
     );
     const [removeLogo, setRemoveLogo] = useState(false);
     const [removeFavicon, setRemoveFavicon] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        setLogoFile(null);
+        setFaviconFile(null);
+        setLogoPreview(profile.logo_url);
+        setFaviconPreview(profile.favicon_url);
+        setRemoveLogo(false);
+        setRemoveFavicon(false);
+    }, [profile.logo_url, profile.favicon_url]);
 
     const mutation = useMutation({
         mutationFn: () => {
@@ -104,14 +105,17 @@ export default function WebsiteGeneralIndex({ profile, platforms }: Props) {
             formData.append('longitude', longitude);
             formData.append('remove_logo', removeLogo ? '1' : '0');
             formData.append('remove_favicon', removeFavicon ? '1' : '0');
-            if (logo?.file) {
-                formData.append('logo', logo.file);
+            if (logoFile) {
+                formData.append('logo', logoFile);
             }
-            if (favicon?.file) {
-                formData.append('favicon', favicon.file);
+            if (faviconFile) {
+                formData.append('favicon', faviconFile);
             }
 
-            return webApi.post(route('admin.website.general.update'), formData);
+            return webApi.post(
+                route('settings.website-general.update'),
+                formData,
+            );
         },
         onSuccess: (response) => {
             toast.success(
@@ -119,6 +123,8 @@ export default function WebsiteGeneralIndex({ profile, platforms }: Props) {
                     'Website general settings updated successfully.',
             );
             setErrors({});
+            setLogoFile(null);
+            setFaviconFile(null);
             setRemoveLogo(false);
             setRemoveFavicon(false);
             router.reload({ only: ['profile'] });
@@ -154,9 +160,12 @@ export default function WebsiteGeneralIndex({ profile, platforms }: Props) {
         <>
             <Head title="Website General" />
 
-            <div className="flex flex-col gap-6 p-4">
+            <h1 className="sr-only">Website General</h1>
+
+            <div className="flex flex-col gap-6">
                 <Heading
-                    title="Website General"
+                    variant="small"
+                    title="General"
                     description="Manage site branding, contact details, map coordinates, social links, and offices."
                 />
 
@@ -294,25 +303,45 @@ export default function WebsiteGeneralIndex({ profile, platforms }: Props) {
                         <InputError message={errors.description} />
                     </div>
 
-                    <ImageField
-                        label="Logo"
-                        value={logo}
-                        onChange={(value) => {
-                            setLogo(value);
-                            setRemoveLogo(value === null);
-                        }}
-                    />
-                    <InputError message={errors.logo} />
+                    <div className="grid gap-2">
+                        <Label>Logo</Label>
+                        <ImageUpload
+                            value={removeLogo ? null : logoPreview}
+                            onChange={(file) => {
+                                setLogoFile(file);
+                                if (file) {
+                                    setRemoveLogo(false);
+                                    setLogoPreview(URL.createObjectURL(file));
+                                } else {
+                                    setRemoveLogo(true);
+                                    setLogoPreview(null);
+                                }
+                            }}
+                            maxSizeMb={2}
+                        />
+                        <InputError message={errors.logo} />
+                    </div>
 
-                    <ImageField
-                        label="Favicon"
-                        value={favicon}
-                        onChange={(value) => {
-                            setFavicon(value);
-                            setRemoveFavicon(value === null);
-                        }}
-                    />
-                    <InputError message={errors.favicon} />
+                    <div className="grid gap-2">
+                        <Label>Favicon</Label>
+                        <ImageUpload
+                            value={removeFavicon ? null : faviconPreview}
+                            onChange={(file) => {
+                                setFaviconFile(file);
+                                if (file) {
+                                    setRemoveFavicon(false);
+                                    setFaviconPreview(
+                                        URL.createObjectURL(file),
+                                    );
+                                } else {
+                                    setRemoveFavicon(true);
+                                    setFaviconPreview(null);
+                                }
+                            }}
+                            maxSizeMb={0.5}
+                        />
+                        <InputError message={errors.favicon} />
+                    </div>
 
                     <div>
                         <Button type="submit" disabled={mutation.isPending}>
@@ -348,7 +377,7 @@ WebsiteGeneralIndex.layout = {
     breadcrumbs: [
         {
             title: 'General',
-            href: '/admin/website/general',
+            href: '/settings/website-general',
         },
     ],
 };

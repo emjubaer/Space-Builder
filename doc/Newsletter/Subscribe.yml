@@ -1,0 +1,67 @@
+info:
+  name: Subscribe
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: '{{baseUrl}}/api/newsletter/subscribe'
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "email": "jane@example.com"
+      }
+  auth: none
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  # Subscribe to Newsletter
+
+  Subscribe an email address to the newsletter. Email is stored lowercase.
+  Existing active subscriptions are idempotent. Inactive emails are reactivated.
+
+  Throttled: 6 requests per minute (same group as contact form / login).
+
+  ## Request body
+
+  | Field | Type | Required | Notes |
+  |-------|------|----------|-------|
+  | `email` | string | yes | Valid email, max 255 chars |
+
+  ## Response example — `201 Created`
+
+  ```json
+  {
+    "success": true,
+    "status": 201,
+    "message": "Subscribed to the newsletter successfully.",
+    "data": {
+      "id": 1,
+      "email": "jane@example.com",
+      "is_active": true,
+      "subscribed_at": "2026-11-15T04:00:00+00:00"
+    }
+  }
+  ```
+
+  ## Response example — `422 Unprocessable Entity`
+
+  ```json
+  {
+    "message": "The email field is required.",
+    "errors": {
+      "email": ["The email field is required."]
+    }
+  }
+  ```

@@ -28,6 +28,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 
@@ -51,6 +52,7 @@ type Props = {
 };
 
 export default function BlogsTable({ blogs, onChanged }: Props) {
+    const can = useCan();
     const [deleteBlog, setDeleteBlog] = useState<BlogRow | null>(null);
 
     const statusMutation = useMutation({
@@ -156,63 +158,76 @@ export default function BlogsTable({ blogs, onChanged }: Props) {
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem
-                                                onSelect={() =>
-                                                    router.visit(
-                                                        route(
-                                                            'admin.blogs.edit',
-                                                            blog.id,
-                                                        ),
-                                                    )
-                                                }
-                                            >
-                                                Edit
-                                            </DropdownMenuItem>
-                                            {blog.status === 'draft' ? (
+                                            {can('blog_update') && (
                                                 <DropdownMenuItem
                                                     onSelect={() =>
-                                                        statusMutation.mutate({
-                                                            id: blog.id,
-                                                            action: 'published',
-                                                        })
+                                                        router.visit(
+                                                            route(
+                                                                'admin.blogs.edit',
+                                                                blog.id,
+                                                            ),
+                                                        )
                                                     }
                                                 >
-                                                    Publish
-                                                </DropdownMenuItem>
-                                            ) : (
-                                                <DropdownMenuItem
-                                                    onSelect={() =>
-                                                        statusMutation.mutate({
-                                                            id: blog.id,
-                                                            action: 'draft',
-                                                        })
-                                                    }
-                                                >
-                                                    Mark as Draft
+                                                    Edit
                                                 </DropdownMenuItem>
                                             )}
-                                            <DropdownMenuItem
-                                                onSelect={() =>
-                                                    window.open(
-                                                        route(
-                                                            'admin.blogs.preview',
-                                                            blog.id,
-                                                        ),
-                                                        '_blank',
-                                                    )
-                                                }
-                                            >
-                                                Admin Preview
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                onSelect={() =>
-                                                    setDeleteBlog(blog)
-                                                }
-                                                className="text-destructive focus:text-destructive"
-                                            >
-                                                Delete
-                                            </DropdownMenuItem>
+                                            {can('blog_update') &&
+                                                (blog.status === 'draft' ? (
+                                                    <DropdownMenuItem
+                                                        onSelect={() =>
+                                                            statusMutation.mutate(
+                                                                {
+                                                                    id: blog.id,
+                                                                    action: 'published',
+                                                                },
+                                                            )
+                                                        }
+                                                    >
+                                                        Publish
+                                                    </DropdownMenuItem>
+                                                ) : (
+                                                    <DropdownMenuItem
+                                                        onSelect={() =>
+                                                            statusMutation.mutate(
+                                                                {
+                                                                    id: blog.id,
+                                                                    action: 'draft',
+                                                                },
+                                                            )
+                                                        }
+                                                    >
+                                                        Mark as Draft
+                                                    </DropdownMenuItem>
+                                                ))}
+                                            {can('blog_view') && (
+                                                <DropdownMenuItem
+                                                    onSelect={() =>
+                                                        window.open(
+                                                            route(
+                                                                'admin.blogs.preview',
+                                                                blog.id,
+                                                            ),
+                                                            '_blank',
+                                                        )
+                                                    }
+                                                >
+                                                    Admin Preview
+                                                </DropdownMenuItem>
+                                            )}
+                                            {can('blog_delete') && (
+                                                <>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem
+                                                        onSelect={() =>
+                                                            setDeleteBlog(blog)
+                                                        }
+                                                        className="text-destructive focus:text-destructive"
+                                                    >
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>

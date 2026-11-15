@@ -80,12 +80,12 @@ export default function NotificationBell() {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
-                    className="relative"
+                    className="relative text-foreground"
                     aria-label="Notifications"
                 >
-                    <Bell className="size-5" />
+                    <Bell className="size-4" />
                     {unreadCount > 0 && (
                         <Badge className="absolute -top-1 -right-1 flex size-4 items-center justify-center p-0 text-[10px] leading-none">
                             {unreadCount > 99 ? '99+' : unreadCount}

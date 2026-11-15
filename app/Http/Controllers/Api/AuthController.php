@@ -22,7 +22,7 @@ class AuthController extends Controller
 
         return $this->success('Registered successfully.', 201, [
             'token' => $result['token'],
-            'user' => new UserResource($result['user']),
+            'user' => (new UserResource($result['user']))->resolve(),
         ]);
     }
 
@@ -33,10 +33,9 @@ class AuthController extends Controller
             $request->string('password')->toString(),
         );
 
-        return response()->json([
-            'message' => __('Logged in successfully.'),
+        return $this->success(__('Logged in successfully.'), 200, [
             'token' => $result['token'],
-            'user' => new UserResource($result['user']),
+            'user' => (new UserResource($result['user']))->resolve(),
         ]);
     }
 
@@ -46,26 +45,20 @@ class AuthController extends Controller
             $request->string('email')->toString(),
         );
 
-        return response()->json([
-            'message' => $message,
-        ]);
+        return $this->success($message);
     }
 
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $message = $this->auth->resetPassword($request->validated());
 
-        return response()->json([
-            'message' => $message,
-        ]);
+        return $this->success($message);
     }
 
     public function logout(Request $request): JsonResponse
     {
         $this->auth->logout($request->user());
 
-        return response()->json([
-            'message' => __('Logged out successfully.'),
-        ]);
+        return $this->success(__('Logged out successfully.'));
     }
 }

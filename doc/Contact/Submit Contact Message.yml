@@ -50,6 +50,8 @@ docs: |-
 
   ```json
   {
+    "success": true,
+    "status": 201,
     "message": "Your message has been sent successfully.",
     "data": {
       "id": 1,

@@ -14,6 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import PropertiesTable, {
@@ -41,6 +42,7 @@ export default function PropertiesIndex({
     statuses,
     constructionTaskStatuses = [],
 }: Props) {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -116,12 +118,14 @@ export default function PropertiesIndex({
                         title="Properties"
                         description="Manage property listings"
                     />
-                    <Button asChild>
-                        <Link href={route('admin.properties.create')}>
-                            <Plus className="size-4" />
-                            Create Property
-                        </Link>
-                    </Button>
+                    {can('property_create') && (
+                        <Button asChild>
+                            <Link href={route('admin.properties.create')}>
+                                <Plus className="size-4" />
+                                Create Property
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center">

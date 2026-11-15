@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Admin\Website;
 
 use App\Enums\SocialPlatform;
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -11,7 +10,7 @@ class UpdateCompanySocialLinkRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('company_profile_update') ?? false;
     }
 
     /**

@@ -23,5 +23,12 @@ docs: |-
   Property list supports optional filters: `property_type_id`, `location_id`, `status`
   (AND combined). Use `/api/property-types` and `/api/locations` for filter dropdowns.
 
+  `/api/locations` returns full location fields (address, latitude, longitude,
+  map_url, image_url) for dropdowns and map centering. It has **no** filter query
+  params. Find Us Project Type / Status / Location filters go to `/api/properties`.
+
+  Nested `location` on list, featured, and detail includes the same coordinate fields
+  so map markers can be plotted from property results.
+
   All responses use the ApiResponse envelope: `success`, `status`, `message`, `data`
   (and `meta` for paginated list).

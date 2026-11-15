@@ -8,12 +8,14 @@ use App\Models\CompanyProfile;
 use App\Models\CompanySocialLink;
 use App\Models\ContactMessage;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->seed(RoleSeeder::class);
+    $this->seed(PermissionSeeder::class);
 });
 
 function websiteAdminUser(): User
@@ -27,16 +29,16 @@ function websiteAdminUser(): User
 }
 
 test('guests cannot visit website admin pages', function () {
-    $this->get(route('admin.website.general.index'))->assertRedirect(route('login'));
+    $this->get(route('settings.website-general.index'))->assertRedirect(route('login'));
     $this->get(route('admin.website.contacts.index'))->assertRedirect(route('login'));
 });
 
-test('non admin users cannot visit website admin pages', function () {
+test('non admin users cannot visit website general settings', function () {
     $user = User::factory()->create();
     $user->assignRole(UserRole::Staff);
 
     $this->actingAs($user)
-        ->get(route('admin.website.general.index'))
+        ->get(route('settings.website-general.index'))
         ->assertForbidden();
 });
 
@@ -44,10 +46,10 @@ test('admin can view website general and contacts pages', function () {
     $admin = websiteAdminUser();
 
     $this->actingAs($admin)
-        ->get(route('admin.website.general.index'))
+        ->get(route('settings.website-general.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('website/general/index')
+            ->component('settings/website-general')
             ->has('profile')
             ->has('platforms')
         );
@@ -61,12 +63,16 @@ test('admin can view website general and contacts pages', function () {
         );
 });
 
-test('old company path redirects to general', function () {
+test('old website general paths redirect to settings', function () {
     $admin = websiteAdminUser();
 
     $this->actingAs($admin)
+        ->get('/admin/website/general')
+        ->assertRedirect('/settings/website-general');
+
+    $this->actingAs($admin)
         ->get('/admin/website/company')
-        ->assertRedirect('/admin/website/general');
+        ->assertRedirect('/settings/website-general');
 });
 
 test('admin can update website general with branding and map coordinates', function () {
@@ -77,7 +83,7 @@ test('admin can update website general with branding and map coordinates', funct
     $favicon = UploadedFile::fake()->image('favicon.png');
 
     $this->actingAs($admin)
-        ->post(route('admin.website.general.update'), [
+        ->post(route('settings.website-general.update'), [
             'company_name' => 'Space Builder HQ',
             'tagline' => 'Build better',
             'description' => 'We build spaces.',
@@ -107,6 +113,16 @@ test('admin can update website general with branding and map coordinates', funct
 
     Storage::disk('public')->assertExists($profile->logo);
     Storage::disk('public')->assertExists($profile->favicon);
+
+    $faviconUrl = Storage::disk('public')->url($profile->favicon);
+
+    $this->actingAs($admin)
+        ->get(route('settings.website-general.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('branding.favicon_url', $faviconUrl)
+        )
+        ->assertSee($faviconUrl, false);
 });
 
 test('admin can create update and delete social links', function () {
@@ -114,7 +130,7 @@ test('admin can create update and delete social links', function () {
     $profile = CompanyProfile::current();
 
     $this->actingAs($admin)
-        ->postJson(route('admin.website.general.social-links.store'), [
+        ->postJson(route('settings.website-general.social-links.store'), [
             'platform' => SocialPlatform::Facebook->value,
             'url' => 'https://facebook.com/spacebuilder',
             'is_active' => true,
@@ -128,7 +144,7 @@ test('admin can create update and delete social links', function () {
         ->and($link->platform)->toBe(SocialPlatform::Facebook);
 
     $this->actingAs($admin)
-        ->putJson(route('admin.website.general.social-links.update', $link), [
+        ->putJson(route('settings.website-general.social-links.update', $link), [
             'platform' => SocialPlatform::Linkedin->value,
             'url' => 'https://linkedin.com/company/spacebuilder',
             'is_active' => false,
@@ -140,7 +156,7 @@ test('admin can create update and delete social links', function () {
         ->and($link->fresh()->is_active)->toBeFalse();
 
     $this->actingAs($admin)
-        ->deleteJson(route('admin.website.general.social-links.destroy', $link))
+        ->deleteJson(route('settings.website-general.social-links.destroy', $link))
         ->assertOk();
 
     expect(CompanySocialLink::query()->whereKey($link->id)->exists())->toBeFalse();
@@ -151,7 +167,7 @@ test('admin can create update and delete offices with coordinates and single hea
     $profile = CompanyProfile::current();
 
     $this->actingAs($admin)
-        ->postJson(route('admin.website.general.offices.store'), [
+        ->postJson(route('settings.website-general.offices.store'), [
             'name' => 'Head Office',
             'address' => 'Dhaka',
             'email' => 'hq@space.test',
@@ -168,7 +184,7 @@ test('admin can create update and delete offices with coordinates and single hea
         ->and((float) $head->longitude)->toBe(90.4125);
 
     $this->actingAs($admin)
-        ->postJson(route('admin.website.general.offices.store'), [
+        ->postJson(route('settings.website-general.offices.store'), [
             'name' => 'Branch Office',
             'address' => 'Chittagong',
             'is_head_office' => true,
@@ -183,7 +199,7 @@ test('admin can create update and delete offices with coordinates and single hea
     $branch = CompanyOffice::query()->where('name', 'Branch Office')->first();
 
     $this->actingAs($admin)
-        ->putJson(route('admin.website.general.offices.update', $branch), [
+        ->putJson(route('settings.website-general.offices.update', $branch), [
             'name' => 'Port City Office',
             'address' => 'Chittagong',
             'is_head_office' => false,
@@ -196,7 +212,7 @@ test('admin can create update and delete offices with coordinates and single hea
         ->and((float) $branch->fresh()->latitude)->toBe(22.4);
 
     $this->actingAs($admin)
-        ->deleteJson(route('admin.website.general.offices.destroy', $branch))
+        ->deleteJson(route('settings.website-general.offices.destroy', $branch))
         ->assertOk();
 
     expect(CompanyOffice::query()->whereKey($branch->id)->exists())->toBeFalse();

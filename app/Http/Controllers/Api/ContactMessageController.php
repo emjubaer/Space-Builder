@@ -16,9 +16,10 @@ class ContactMessageController extends Controller
     {
         $message = $this->contactMessages->create($request->validated());
 
-        return response()->json([
-            'message' => __('Your message has been sent successfully.'),
-            'data' => (new ContactMessageResource($message))->resolve(),
-        ], 201);
+        return $this->success(
+            __('Your message has been sent successfully.'),
+            201,
+            (new ContactMessageResource($message))->resolve(),
+        );
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Admin\Property\ConstructionTask;
 
 use App\Enums\ConstructionTaskStatus;
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -11,7 +10,7 @@ class UpdateConstructionTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('property_update') ?? false;
     }
 
     /**

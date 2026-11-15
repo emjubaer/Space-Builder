@@ -1,6 +1,8 @@
 import { Upload, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+
+const DEFAULT_ACCEPT = 'image/jpeg,image/png,image/webp';
 
 type Props = {
     value?: string | null;
@@ -8,7 +10,50 @@ type Props = {
     className?: string;
     disabled?: boolean;
     maxSizeMb?: number;
+    accept?: string;
 };
+
+function formatAcceptLabels(accept: string): string {
+    const labels = new Set<string>();
+
+    accept.split(',').forEach((part) => {
+        const value = part.trim().toLowerCase();
+
+        if (value === 'image/jpeg' || value === '.jpg' || value === '.jpeg') {
+            labels.add('JPG');
+            return;
+        }
+
+        if (value === 'image/png' || value === '.png') {
+            labels.add('PNG');
+            return;
+        }
+
+        if (value === 'image/webp' || value === '.webp') {
+            labels.add('WEBP');
+            return;
+        }
+
+        if (value === 'image/gif' || value === '.gif') {
+            labels.add('GIF');
+            return;
+        }
+
+        if (value.startsWith('.')) {
+            labels.add(value.slice(1).toUpperCase());
+        }
+    });
+
+    return labels.size > 0 ? Array.from(labels).join(', ') : 'Images';
+}
+
+function formatMaxSize(maxSizeMb: number): string {
+    if (Number.isInteger(maxSizeMb)) {
+        return `${maxSizeMb} MB`;
+    }
+
+    return `${maxSizeMb} MB`;
+}
 
 export default function ImageUpload({
     value = null,
@@ -16,11 +61,16 @@ export default function ImageUpload({
     className,
     disabled = false,
     maxSizeMb = 2,
+    accept = DEFAULT_ACCEPT,
 }: Props) {
     const [preview, setPreview] = useState<string | null>(value);
     const [error, setError] = useState('');
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const hint = useMemo(() => {
+        return `${formatAcceptLabels(accept)}. Max ${formatMaxSize(maxSizeMb)}.`;
+    }, [accept, maxSizeMb]);
 
     useEffect(() => {
         setPreview(value || null);
@@ -37,7 +87,7 @@ export default function ImageUpload({
         }
 
         if (file.size > maxSizeMb * 1024 * 1024) {
-            setError(`File size must be less than ${maxSizeMb}MB`);
+            setError(`File size must be less than ${formatMaxSize(maxSizeMb)}`);
             return;
         }
 
@@ -62,7 +112,7 @@ export default function ImageUpload({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept={accept}
                 className="hidden"
                 disabled={disabled}
                 onChange={(event) => handleFile(event.target.files?.[0])}
@@ -128,6 +178,7 @@ export default function ImageUpload({
                     <span className="text-[10px]">Upload</span>
                 </button>
             )}
+            <p className="mt-1.5 text-xs text-muted-foreground">{hint}</p>
             {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
         </div>
     );

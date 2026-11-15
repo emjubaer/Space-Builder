@@ -7,12 +7,14 @@ use App\Models\BlogAuthor;
 use App\Models\BlogCategory;
 use App\Models\BlogImage;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->seed(RoleSeeder::class);
+    $this->seed(PermissionSeeder::class);
 });
 
 function blogAdminUser(): User
@@ -132,6 +134,35 @@ test('admin can update author without changing slug', function () {
     expect($author->fresh()->slug)->toBe('keep-this-slug')
         ->and($author->fresh()->designation)->toBe('Senior Editor')
         ->and($author->fresh()->bio)->toBe('Updated bio');
+});
+
+test('admin can update author avatar', function () {
+    Storage::fake('public');
+
+    $admin = blogAdminUser();
+    $author = BlogAuthor::factory()->create();
+    $oldAvatar = UploadedFile::fake()->image('old-avatar.jpg')->store('avatars', 'public');
+    $author->user->update(['avatar' => $oldAvatar]);
+
+    $newAvatar = UploadedFile::fake()->image('new-avatar.jpg');
+
+    $this->actingAs($admin)
+        ->post(route('admin.blogs.authors.update', $author), [
+            '_method' => 'PUT',
+            'bio' => $author->bio,
+            'designation' => $author->designation,
+            'status' => true,
+            'avatar' => $newAvatar,
+        ])
+        ->assertOk();
+
+    $author->refresh()->load('user');
+
+    expect($author->user?->avatar)->not->toBeNull()
+        ->and($author->user?->avatar)->not->toBe($oldAvatar);
+
+    Storage::disk('public')->assertMissing($oldAvatar);
+    Storage::disk('public')->assertExists($author->user->avatar);
 });
 
 test('admin can create update and delete category', function () {

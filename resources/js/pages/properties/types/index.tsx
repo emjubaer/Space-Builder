@@ -6,6 +6,7 @@ import Heading from '@/components/heading';
 import Pagination from '@/components/pagination';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCan } from '@/hooks/use-can';
 import { route } from '@/lib/route';
 import webApi from '@/lib/webApi';
 import CreateType from '@/pages/properties/types/partials/create-type';
@@ -14,6 +15,7 @@ import TypesTable, {
 } from '@/pages/properties/types/partials/types-table';
 
 export default function PropertyTypesIndex() {
+    const can = useCan();
     const queryClient = useQueryClient();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -73,7 +75,9 @@ export default function PropertyTypesIndex() {
                         title="Types"
                         description="Property type catalog"
                     />
-                    <CreateType onSuccess={refresh} />
+                    {can('property_type_create') && (
+                        <CreateType onSuccess={refresh} />
+                    )}
                 </div>
                 <div className="relative max-w-sm">
                     <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />

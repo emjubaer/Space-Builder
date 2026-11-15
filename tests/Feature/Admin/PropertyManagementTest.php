@@ -9,6 +9,7 @@ use App\Models\PropertyFeature;
 use App\Models\PropertyImage;
 use App\Models\PropertyType;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Schema;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->seed(RoleSeeder::class);
+    $this->seed(PermissionSeeder::class);
 });
 
 function propertyAdminUser(): User

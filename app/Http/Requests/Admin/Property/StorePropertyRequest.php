@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Admin\Property;
 
 use App\Enums\PropertyStatus;
-use App\Enums\UserRole;
 use App\Models\Location;
 use App\Models\PropertyFeature;
 use App\Models\PropertyType;
@@ -14,7 +13,7 @@ class StorePropertyRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('property_create') ?? false;
     }
 
     protected function prepareForValidation(): void

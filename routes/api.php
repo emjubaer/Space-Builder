@@ -5,8 +5,10 @@ use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\CompanyProfileController;
 use App\Http\Controllers\Api\ContactMessageController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\PropertyTypeController;
+use App\Http\Controllers\Api\ReferralController;
 use App\Http\Controllers\Api\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +34,13 @@ Route::middleware('throttle:6,1')->group(function () {
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('api.password.email');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('api.password.update');
     Route::post('/contact-messages', [ContactMessageController::class, 'store'])->name('api.contact-messages.store');
+    Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('api.newsletter.subscribe');
+    Route::post('/referrals/{referralCode}', [ReferralController::class, 'storeByCode'])->name('api.referrals.store-by-code');
 });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+    Route::get('/referrals/summary', [ReferralController::class, 'summary'])->name('api.referrals.summary');
+    Route::get('/referrals', [ReferralController::class, 'index'])->name('api.referrals.index');
+    Route::post('/referrals', [ReferralController::class, 'store'])->name('api.referrals.store');
 });

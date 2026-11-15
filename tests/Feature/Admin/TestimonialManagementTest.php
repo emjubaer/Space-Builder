@@ -5,12 +5,14 @@ use App\Enums\UserRole;
 use App\Enums\VideoProvider;
 use App\Models\Testimonial;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->seed(RoleSeeder::class);
+    $this->seed(PermissionSeeder::class);
 });
 
 function testimonialAdminUser(): User
@@ -120,12 +122,17 @@ test('public api returns only active testimonials of requested type', function (
 
     $this->getJson(route('api.testimonials.index'))
         ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('status', 200)
+        ->assertJsonPath('message', 'Testimonials retrieved.')
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.reviewer_name', 'Active Text')
         ->assertJsonPath('data.0.content', fn ($value) => filled($value));
 
     $this->getJson(route('api.testimonials.index', ['type' => 'video']))
         ->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('message', 'Testimonials retrieved.')
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.reviewer_name', 'Active Video')
         ->assertJsonPath('data.0.embed_url', fn ($value) => filled($value));

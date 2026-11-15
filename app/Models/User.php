@@ -53,6 +53,18 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Build the public referral link from APP_URL + /ref/{code}.
+     */
+    public function referralLink(): ?string
+    {
+        if ($this->referral_code === null || $this->referral_code === '') {
+            return null;
+        }
+
+        return rtrim((string) config('app.url'), '/').'/ref/'.$this->referral_code;
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function referrer(): BelongsTo

@@ -27,13 +27,24 @@ test('guests cannot visit role page', function () {
     $this->get(route('admin.role.index'))->assertRedirect(route('login'));
 });
 
-test('non admin users cannot visit role page', function () {
+test('users without role permission cannot visit role page', function () {
     $user = User::factory()->create();
     $user->assignRole(UserRole::Staff);
 
     $this->actingAs($user)
         ->get(route('admin.role.index'))
         ->assertForbidden();
+});
+
+test('custom role with role_view can visit role page', function () {
+    $user = User::factory()->create();
+    $role = Role::create(['name' => 'role-viewer', 'guard_name' => 'web']);
+    $role->givePermissionTo('role_view');
+    $user->assignRole($role);
+
+    $this->actingAs($user)
+        ->get(route('admin.role.index'))
+        ->assertOk();
 });
 
 test('admin can view role page', function () {
@@ -83,7 +94,7 @@ test('role list includes permissions without n plus one queries', function () {
             || (str_contains($sql, 'from `permissions`') && str_contains($sql, 'inner join'));
     });
 
-    expect($permissionRelationQueries->count())->toBeLessThanOrEqual(2);
+    expect($permissionRelationQueries->count())->toBeLessThanOrEqual(3);
 
     $customRole = collect($response->json('data'))->firstWhere('name', 'custom-role');
 

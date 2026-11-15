@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin\Role;
 
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
@@ -11,7 +10,7 @@ class UpdateRoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole(UserRole::Admin) ?? false;
+        return $this->user()?->can('role_update') ?? false;
     }
 
     /**

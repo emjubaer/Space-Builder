@@ -17,6 +17,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useCan } from '@/hooks/use-can';
 import ChangePasswordUser from '@/pages/users/partials/change-password-user';
 import DeleteUser from '@/pages/users/partials/delete-user';
 import UpdateUser from '@/pages/users/partials/update-user';
@@ -43,6 +44,7 @@ type Props = {
 };
 
 export default function UsersTable({ users, roles, onChanged }: Props) {
+    const can = useCan();
     const currentUserId = usePage().props.auth.user?.id;
     const [editOpenId, setEditOpenId] = useState<number | null>(null);
     const [deleteOpenId, setDeleteOpenId] = useState<number | null>(null);
@@ -108,32 +110,43 @@ export default function UsersTable({ users, roles, onChanged }: Props) {
                                         </button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem
-                                            onSelect={() =>
-                                                setEditOpenId(user.id)
-                                            }
-                                        >
-                                            Edit
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            onSelect={() =>
-                                                setChangePasswordOpenId(user.id)
-                                            }
-                                        >
-                                            Change Password
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem
-                                            onSelect={() =>
-                                                setDeleteOpenId(user.id)
-                                            }
-                                            disabled={
-                                                currentUserId === user.id
-                                            }
-                                            className="text-destructive focus:text-destructive"
-                                        >
-                                            Delete
-                                        </DropdownMenuItem>
+                                        {can('user_update') && (
+                                            <DropdownMenuItem
+                                                onSelect={() =>
+                                                    setEditOpenId(user.id)
+                                                }
+                                            >
+                                                Edit
+                                            </DropdownMenuItem>
+                                        )}
+                                        {can('user_update') && (
+                                            <DropdownMenuItem
+                                                onSelect={() =>
+                                                    setChangePasswordOpenId(
+                                                        user.id,
+                                                    )
+                                                }
+                                            >
+                                                Change Password
+                                            </DropdownMenuItem>
+                                        )}
+                                        {can('user_delete') && (
+                                            <>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem
+                                                    onSelect={() =>
+                                                        setDeleteOpenId(user.id)
+                                                    }
+                                                    disabled={
+                                                        currentUserId ===
+                                                        user.id
+                                                    }
+                                                    className="text-destructive focus:text-destructive"
+                                                >
+                                                    Delete
+                                                </DropdownMenuItem>
+                                            </>
+                                        )}
                                     </DropdownMenuContent>
                                 </DropdownMenu>
 

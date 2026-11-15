@@ -6,13 +6,13 @@ use App\Enums\TestimonialType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\TestimonialResource;
 use App\Models\Testimonial;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use ValueError;
 
 class TestimonialController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $typeValue = $request->string('type')->toString() ?: TestimonialType::Text->value;
 
@@ -29,11 +29,27 @@ class TestimonialController extends Controller
             ->latest();
 
         if ($request->boolean('paginate')) {
-            return TestimonialResource::collection(
-                $query->paginate($request->integer('per_page', 15)),
+            $paginator = $query->paginate($request->integer('per_page', 15));
+
+            return $this->success(
+                'Testimonials retrieved.',
+                200,
+                TestimonialResource::collection($paginator)->resolve(),
+                [
+                    'current_page' => $paginator->currentPage(),
+                    'per_page' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                    'last_page' => $paginator->lastPage(),
+                    'from' => $paginator->firstItem(),
+                    'to' => $paginator->lastItem(),
+                ],
             );
         }
 
-        return TestimonialResource::collection($query->get());
+        return $this->success(
+            'Testimonials retrieved.',
+            200,
+            TestimonialResource::collection($query->get())->resolve(),
+        );
     }
 }

@@ -23,6 +23,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'mobile' => $this->mobile,
+            'referral_code' => $this->referral_code,
+            'referral_link' => $this->referralLink(),
             'email_verified_at' => $this->email_verified_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

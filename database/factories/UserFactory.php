@@ -28,7 +28,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'mobile' => fake()->unique()->numerify('01#########'),
-            'referral_code' => strtoupper(Str::random(8)),
+            'referral_code' => strtolower(Str::random(8)),
             'referred_by' => null,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

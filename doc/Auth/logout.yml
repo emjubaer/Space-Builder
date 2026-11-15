@@ -47,7 +47,10 @@ docs: |-
 
   ```json
   {
-    "message": "Logged out successfully."
+    "success": true,
+    "status": 200,
+    "message": "Logged out successfully.",
+    "data": []
   }
   ```
 

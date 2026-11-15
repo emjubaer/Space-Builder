@@ -36,13 +36,12 @@ class PropertySummaryResource extends JsonResource
             'launch_date' => $this->launch_date?->toDateString(),
             'expected_completion_date' => $this->expected_completion_date?->toDateString(),
             'is_featured' => $this->is_featured,
-            'location' => $this->whenLoaded('location', fn () => [
-                'id' => $this->location?->id,
-                'name' => $this->location?->name,
-                'address' => $this->location?->address,
-                'city' => $this->location?->city,
-                'area' => $this->location?->area,
-            ]),
+            'location' => $this->whenLoaded(
+                'location',
+                fn () => $this->location
+                    ? (new PropertyLocationResource($this->location))->resolve()
+                    : null,
+            ),
             'property_type' => $this->whenLoaded(
                 'propertyType',
                 fn () => (new PropertyTypeResource($this->propertyType))->resolve(),

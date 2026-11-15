@@ -1,0 +1,91 @@
+info:
+  name: Add Referral By Code
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/referrals/qqg9xkcc"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "referred_name": "Jubaer",
+        "referred_phone": "+8801400715038",
+        "note": "From shared link",
+        "permission_confirmed": true
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: |-
+  # Add Referral By Code
+
+  Public endpoint used by the Next.js referral form. Resolves the referrer from `{referralCode}` and creates a lead with `source=link` and status `unverified`.
+
+  Throttled (6 requests per minute).
+
+  ## Path params
+
+  | Param | Notes |
+  | --- | --- |
+  | `referralCode` | The inviter's `users.referral_code` |
+
+  ## Request body
+
+  | Field | Type | Required | Notes |
+  | --- | --- | --- | --- |
+  | `referred_name` | string | yes | Max 255 chars |
+  | `referred_phone` | string | yes | Max 20 chars |
+  | `note` | string | no | Optional note |
+  | `permission_confirmed` | boolean | no | Defaults to `false` |
+
+  ## Response example — `201 Created`
+
+  ```json
+  {
+    "success": true,
+    "status": 201,
+    "message": "Referral added successfully.",
+    "data": {
+      "id": 2,
+      "referred_name": "Link Lead",
+      "referred_phone": "+8801400715038",
+      "submitted_at": "2026-11-12T00:00:00.000000Z",
+      "status": "unverified",
+      "source": "link",
+      "note": "From shared link"
+    }
+  }
+  ```
+
+  ## Response example — `422 Unprocessable Entity` (phone cooldown)
+
+  ```json
+  {
+    "message": "This phone number was already referred within the last 2 months.",
+    "errors": {
+      "referred_phone": ["This phone number was already referred within the last 2 months."]
+    }
+  }
+  ```
+
+  <br/>
+
+  ## Response example — `404 Not Found`
+
+  ```json
+  {
+    "message": "No query results for model [App\\Models\\User]."
+  }
+  ```
